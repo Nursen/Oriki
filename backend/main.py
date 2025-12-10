@@ -23,10 +23,25 @@ app = FastAPI(
 )
 
 # Configure CORS middleware to allow frontend to communicate with backend
-# For development, we allow all origins - we'll restrict this in production
+# DEPLOYMENT CONFIGURATION:
+# This allows both local development and GitHub Pages production deployment
+# to communicate with the backend API
+#
+# ALLOWED ORIGINS:
+# - http://localhost:* - For local development (any port)
+# - https://*.github.io - For GitHub Pages deployment
+# - https://nursen.github.io - Your specific GitHub Pages domain
+#
+# After deploying to GitHub Pages, your frontend URL will be:
+# https://YOUR_USERNAME.github.io/Oriki/
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allow all origins for now
+    allow_origins=[
+        "http://localhost:*",           # Local development
+        "http://127.0.0.1:*",           # Local development alternative
+        "https://*.github.io",          # GitHub Pages (wildcard)
+        "https://nursen.github.io"      # Your GitHub Pages domain
+    ],
     allow_credentials=True,
     allow_methods=["*"],  # Allow all HTTP methods (GET, POST, etc.)
     allow_headers=["*"],  # Allow all headers

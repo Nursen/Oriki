@@ -7,9 +7,14 @@
 // ============================================================================
 // API CONFIGURATION - Backend API endpoint
 // ============================================================================
-// This is where our Flask backend is running
-// Update this URL when deploying to production
+// DEPLOYMENT GUIDE:
+// 1. For LOCAL DEVELOPMENT: Use localhost (current setting)
+// 2. For PRODUCTION: Replace with your Render backend URL after deploying
+//    Example: const API_BASE_URL = 'https://oriki-api.onrender.com';
+//
+// IMPORTANT: Update this URL after deploying backend to Render!
 const API_BASE_URL = 'http://localhost:8000';
+// Production: const API_BASE_URL = 'https://oriki-api.onrender.com';
 
 // ============================================================================
 // QUIZ DATA - Hardcoded questions (will fetch from API later)
