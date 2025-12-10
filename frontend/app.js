@@ -140,7 +140,14 @@ const elements = {
     poemLines: document.getElementById('poem-lines'),
     affirmationsList: document.getElementById('affirmations-list'),
     audioPlayer: document.getElementById('audio-player'),
-    culturalDisclaimer: document.getElementById('cultural-disclaimer')
+    culturalDisclaimer: document.getElementById('cultural-disclaimer'),
+
+    // Audio player elements
+    generateAudioBtn: document.getElementById('generate-audio-btn'),
+    audioLoading: document.getElementById('audio-loading'),
+    audioElement: document.getElementById('audio-element'),
+    playPauseBtn: document.getElementById('play-pause-btn'),
+    downloadAudioBtn: document.getElementById('download-audio-btn')
 };
 
 // ============================================================================
@@ -156,6 +163,11 @@ function initializeApp() {
     elements.nextBtn.addEventListener('click', nextQuestion);
     elements.startOverBtn.addEventListener('click', restartQuiz);
     elements.shareBtn.addEventListener('click', shareOriki);
+
+    // Attach audio player event listeners
+    elements.generateAudioBtn.addEventListener('click', handleGenerateAudio);
+    elements.playPauseBtn.addEventListener('click', togglePlayPause);
+    elements.downloadAudioBtn.addEventListener('click', downloadAudio);
 
     console.log('Oriki Quiz app initialized successfully');
 }
@@ -203,6 +215,10 @@ function restartQuiz() {
     // Reset everything and go back to welcome
     quizState.currentQuestionIndex = 0;
     quizState.answers = {};
+
+    // Reset audio player state
+    resetAudioPlayer();
+
     showSection(elements.welcomeSection);
 }
 
@@ -611,6 +627,156 @@ function displayResults(data) {
         affirmationCount: affirmations.length,
         culturalMode: culturalMode
     });
+}
+
+// ============================================================================
+// AUDIO PLAYER FUNCTIONALITY
+// ============================================================================
+
+// Global variable to store current poem and affirmations for audio generation
+let currentPoemText = '';
+let currentAffirmationsText = '';
+
+// Handle the Generate Audio button click
+function handleGenerateAudio() {
+    // Get the current poem lines
+    const poemLines = Array.from(elements.poemLines.children)
+        .map(el => el.textContent)
+        .join('\n');
+
+    // Get the current affirmations
+    const affirmations = Array.from(elements.affirmationsList.children)
+        .map(el => el.textContent)
+        .join('\n');
+
+    // Call the main generate audio function
+    generateAudio(poemLines, affirmations);
+}
+
+// Main function to generate audio from poem and affirmations
+async function generateAudio(poemLines, affirmations) {
+    // Store the text for later use
+    currentPoemText = poemLines;
+    currentAffirmationsText = affirmations;
+
+    // Combine poem and affirmations into a single text
+    const fullText = `${poemLines}\n\n${affirmations}`;
+
+    // Hide the generate button and show loading state
+    elements.generateAudioBtn.classList.add('hidden');
+    elements.audioLoading.classList.remove('hidden');
+
+    try {
+        // TODO: In Task 2.6, we'll wire this to the real API
+        // For now, simulate API call with a delay
+        await simulateAudioGeneration(fullText);
+
+        // Hide loading state
+        elements.audioLoading.classList.add('hidden');
+
+        // Show the audio player
+        elements.audioPlayer.classList.remove('hidden');
+
+        console.log('Audio generated successfully');
+    } catch (error) {
+        console.error('Error generating audio:', error);
+
+        // Hide loading and show generate button again
+        elements.audioLoading.classList.add('hidden');
+        elements.generateAudioBtn.classList.remove('hidden');
+
+        // Show error message to user
+        alert('Failed to generate audio. Please try again.');
+    }
+}
+
+// Simulate audio generation (placeholder for real API call)
+async function simulateAudioGeneration(text) {
+    // Simulate a 2-second API call delay
+    return new Promise((resolve) => {
+        setTimeout(() => {
+            // For now, we'll create a placeholder audio source
+            // In Task 2.6, this will be replaced with the actual base64 audio from the API
+            console.log('Simulating audio generation for text:', text);
+            resolve();
+        }, 2000);
+    });
+}
+
+// Toggle play/pause for the audio
+function togglePlayPause() {
+    const audio = elements.audioElement;
+    const playIcon = elements.playPauseBtn.querySelector('.play-icon');
+    const pauseIcon = elements.playPauseBtn.querySelector('.pause-icon');
+
+    // Check if audio is currently playing
+    if (audio.paused) {
+        // Play the audio
+        audio.play();
+
+        // Swap icons: hide play, show pause
+        playIcon.classList.add('hidden');
+        pauseIcon.classList.remove('hidden');
+
+        console.log('Audio playing');
+    } else {
+        // Pause the audio
+        audio.pause();
+
+        // Swap icons: show play, hide pause
+        playIcon.classList.remove('hidden');
+        pauseIcon.classList.add('hidden');
+
+        console.log('Audio paused');
+    }
+}
+
+// Download the audio file
+function downloadAudio() {
+    const audio = elements.audioElement;
+
+    // Check if audio source is available
+    if (!audio.src) {
+        alert('No audio available to download.');
+        return;
+    }
+
+    // Create a temporary link element to trigger download
+    const link = document.createElement('a');
+    link.href = audio.src;
+    link.download = 'my-oriki-audio.mp3'; // Default filename
+    link.style.display = 'none';
+
+    // Append to body, click, and remove
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    console.log('Audio download triggered');
+}
+
+// Reset audio player when starting over
+function resetAudioPlayer() {
+    // Hide audio player and show generate button
+    elements.audioPlayer.classList.add('hidden');
+    elements.audioLoading.classList.add('hidden');
+    elements.generateAudioBtn.classList.remove('hidden');
+
+    // Stop and reset audio
+    const audio = elements.audioElement;
+    audio.pause();
+    audio.currentTime = 0;
+    audio.src = '';
+
+    // Reset play/pause icons
+    const playIcon = elements.playPauseBtn.querySelector('.play-icon');
+    const pauseIcon = elements.playPauseBtn.querySelector('.pause-icon');
+    playIcon.classList.remove('hidden');
+    pauseIcon.classList.add('hidden');
+
+    // Clear stored text
+    currentPoemText = '';
+    currentAffirmationsText = '';
 }
 
 // ============================================================================

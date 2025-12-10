@@ -99,13 +99,49 @@
                     </ul>
                 </div>
 
-                <!-- Audio Player Section - placeholder for future audio integration -->
+                <!-- Audio Player Section - functional audio player -->
                 <div class="audio-container">
                     <h3>Listen to Your Oriki</h3>
                     <p class="audio-description">Hear your Oriki spoken with reverence and power.</p>
-                    <div id="audio-player" class="audio-player-placeholder">
-                        <p class="coming-soon">Audio narration coming soon</p>
-                        <!-- Future: <audio controls> element will go here -->
+
+                    <!-- Generate Audio Button - shown initially -->
+                    <button id="generate-audio-btn" class="btn btn-secondary generate-audio-btn">
+                        Generate Audio
+                    </button>
+
+                    <!-- Audio Loading State - shown while generating -->
+                    <div id="audio-loading" class="audio-loading hidden">
+                        <div class="spinner"></div>
+                        <p class="loading-message">Creating your audio narration...</p>
+                    </div>
+
+                    <!-- Audio Player - shown after audio is generated -->
+                    <div id="audio-player" class="audio-player hidden">
+                        <!-- HTML5 audio element -->
+                        <audio id="audio-element" preload="auto">
+                            Your browser does not support the audio element.
+                        </audio>
+
+                        <!-- Custom audio controls -->
+                        <div class="audio-controls">
+                            <button id="play-pause-btn" class="audio-btn play-btn" aria-label="Play audio">
+                                <!-- Play icon (SVG) -->
+                                <svg class="play-icon" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M8 5v14l11-7z"/>
+                                </svg>
+                                <!-- Pause icon (SVG) -->
+                                <svg class="pause-icon hidden" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>
+                                </svg>
+                            </button>
+
+                            <button id="download-audio-btn" class="audio-btn download-btn" aria-label="Download audio">
+                                <!-- Download icon (SVG) -->
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+                                </svg>
+                            </button>
+                        </div>
                     </div>
                 </div>
 
