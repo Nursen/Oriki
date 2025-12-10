@@ -1,6 +1,9 @@
 # Claude AI local configuration
 .claude/
 
+# Project specification (binary, keep local)
+Oriki Project.pdf
+
 # Python
 __pycache__/
 *.py[cod]
