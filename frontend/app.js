@@ -97,11 +97,28 @@ const quizQuestions = [
     {
         id: 'cultural_mode',
         type: 'single-select',
-        question: 'How do you relate to tradition and innovation?',
+        question: 'Which cultural/spiritual lens would you like for your praise poetry?',
         options: [
-            { value: 'traditional', label: 'I honor and preserve what came before' },
-            { value: 'balanced', label: 'I blend the old with the new' },
-            { value: 'progressive', label: 'I forge new paths forward' }
+            {
+                value: 'yoruba_inspired',
+                label: 'Yoruba-Inspired',
+                description: 'Uses the aesthetic structure of Oríkì (traditional Yoruba praise poetry) with rhythmic repetition and nature metaphors. Inspired by, not claiming to be authentic.'
+            },
+            {
+                value: 'secular',
+                label: 'Secular',
+                description: 'Modern psychological approach grounded in positive psychology and universal human experiences, without religious or spiritual references.'
+            },
+            {
+                value: 'turkish',
+                label: 'Turkish',
+                description: 'Alkış blessing tradition from Turkish folklore, emphasizing protection, prosperity, and warm family blessings with nature imagery.'
+            },
+            {
+                value: 'biblical',
+                label: 'Biblical',
+                description: 'Scriptural cadence inspired by Psalms and Beatitudes, with themes of covenant, purpose, and calling using biblical metaphors.'
+            }
         ]
     },
     {
@@ -112,6 +129,54 @@ const quizQuestions = [
         placeholder: 'Share your thoughts about how you want to impact the world and be remembered...'
     }
 ];
+
+// ============================================================================
+// CULTURAL MODE DESCRIPTIONS AND DISCLAIMERS
+// ============================================================================
+// These descriptions explain each cultural mode and provide appropriate context
+const culturalModeInfo = {
+    yoruba_inspired: {
+        title: 'About Yoruba-Inspired Praise Poetry',
+        description: 'The poetry you receive is inspired by the Yoruba tradition of Oríkì—a centuries-old form of praise poetry that celebrates identity, lineage, and character through rhythmic, metaphor-rich verse.',
+        whatItIs: 'This app uses the aesthetic structure of Oríkì (praise-naming, nature metaphors, rhythmic repetition) to celebrate your unique heritage and accomplishments.',
+        whatItIsNot: [
+            'Not traditional Yoruba Oríkì performed by a skilled practitioner',
+            'Not a claim of Yoruba ancestry unless you have shared that heritage',
+            'Does not replace consultation with cultural knowledge-keepers'
+        ],
+        commitment: 'We will NEVER fabricate Yoruba names, clan identities, or spiritual relationships that are not part of your confirmed heritage. We celebrate Yoruba tradition by respecting its boundaries.'
+    },
+    secular: {
+        title: 'About Secular Praise Poetry',
+        description: 'Your praise poetry uses a modern, psychological approach grounded in positive psychology and universal human experiences.',
+        whatItIs: 'This poetry celebrates your strengths, values, and aspirations using contemporary language and accessible metaphors that anyone can relate to, regardless of spiritual background.',
+        whatItIsNot: [
+            'Not religious or spiritual in nature',
+            'Not claiming any particular cultural tradition'
+        ],
+        commitment: 'We use evidence-based positive psychology principles to create affirming, empowering poetry that celebrates your authentic self.'
+    },
+    turkish: {
+        title: 'About Turkish Blessing Poetry (Alkış)',
+        description: 'Your blessing poetry is inspired by the Turkish folk tradition of Alkış—protective blessings passed down through generations in Anatolian culture.',
+        whatItIs: 'This poetry uses the blessing structure and warm, familial tone characteristic of Turkish folklore, with nature metaphors common in traditional Alkış.',
+        whatItIsNot: [
+            'Not traditional folk Alkış performed by cultural practitioners',
+            'Not a claim of Turkish heritage unless you have shared that background'
+        ],
+        commitment: 'We honor Turkish folk tradition by using its aesthetic structure while celebrating your personal journey and values.'
+    },
+    biblical: {
+        title: 'About Biblical-Style Praise Poetry',
+        description: 'Your praise poetry uses scriptural cadence and structure inspired by the Psalms and Beatitudes.',
+        whatItIs: 'This poetry employs the rhythmic patterns, blessing language, and metaphors found in biblical literature to affirm your purpose and calling.',
+        whatItIsNot: [
+            'Not direct scripture or biblical text',
+            'Not claiming divine revelation or prophecy'
+        ],
+        commitment: 'We use biblical literary patterns to create uplifting, purpose-centered poetry that celebrates your identity and mission.'
+    }
+};
 
 // ============================================================================
 // STATE MANAGEMENT - Store quiz state in a simple object
@@ -329,11 +394,25 @@ function renderSingleSelectQuestion(question) {
             handleSingleSelectChange(question.id, e.target.value);
         });
 
+        // Create a container for label text and optional description
+        const textContainer = document.createElement('span');
+        textContainer.className = 'option-text-container';
+
         const labelText = document.createElement('span');
+        labelText.className = 'option-label';
         labelText.textContent = option.label;
+        textContainer.appendChild(labelText);
+
+        // Add description if it exists (for cultural_mode question)
+        if (option.description) {
+            const descText = document.createElement('span');
+            descText.className = 'option-description';
+            descText.textContent = option.description;
+            textContainer.appendChild(descText);
+        }
 
         label.appendChild(radio);
-        label.appendChild(labelText);
+        label.appendChild(textContainer);
         container.appendChild(label);
     });
 
@@ -722,12 +801,8 @@ function displayResults(data) {
         elements.affirmationsList.appendChild(listItem);
     });
 
-    // Show cultural disclaimer if in Yoruba mode
-    if (culturalMode === 'yoruba') {
-        elements.culturalDisclaimer.classList.remove('hidden');
-    } else {
-        elements.culturalDisclaimer.classList.add('hidden');
-    }
+    // Display cultural disclaimer based on cultural mode
+    displayCulturalInfo(culturalMode);
 
     // Log results for debugging
     console.log('Results displayed:', {
@@ -735,6 +810,49 @@ function displayResults(data) {
         affirmationCount: affirmations.length,
         culturalMode: culturalMode
     });
+}
+
+// ============================================================================
+// CULTURAL INFO DISPLAY - Show appropriate context based on cultural mode
+// ============================================================================
+function displayCulturalInfo(culturalMode) {
+    // Get the cultural info for this mode
+    const modeInfo = culturalModeInfo[culturalMode];
+
+    if (!modeInfo) {
+        // If mode info doesn't exist, hide the disclaimer
+        elements.culturalDisclaimer.classList.add('hidden');
+        console.warn('No cultural info found for mode:', culturalMode);
+        return;
+    }
+
+    // Build the cultural disclaimer HTML
+    let disclaimerHTML = `<h4>${modeInfo.title}</h4>`;
+
+    // Add description
+    disclaimerHTML += `<p class="cultural-description">${modeInfo.description}</p>`;
+
+    // Add "What This Is" section
+    disclaimerHTML += `<p class="cultural-section"><strong>What This Is:</strong><br>${modeInfo.whatItIs}</p>`;
+
+    // Add "What This Is NOT" section
+    if (modeInfo.whatItIsNot && modeInfo.whatItIsNot.length > 0) {
+        disclaimerHTML += `<p class="cultural-section"><strong>What This Is NOT:</strong></p>`;
+        disclaimerHTML += '<ul class="cultural-list">';
+        modeInfo.whatItIsNot.forEach(item => {
+            disclaimerHTML += `<li>${item}</li>`;
+        });
+        disclaimerHTML += '</ul>';
+    }
+
+    // Add commitment section
+    disclaimerHTML += `<p class="cultural-commitment"><strong>Our Cultural Commitment:</strong><br>${modeInfo.commitment}</p>`;
+
+    // Set the HTML content
+    elements.culturalDisclaimer.innerHTML = disclaimerHTML;
+
+    // Always show the disclaimer (it's now contextual for all modes)
+    elements.culturalDisclaimer.classList.remove('hidden');
 }
 
 // ============================================================================

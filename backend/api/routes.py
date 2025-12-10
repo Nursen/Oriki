@@ -109,6 +109,10 @@ async def generate_oriki(submission: QuizSubmission) -> GenerationResponse:
         # Generate the poem using the extracted themes and cultural mode
         poem = await compose_poem(themes, poetry_cultural_mode)
 
+        # Update the poem's cultural_mode to match the quiz format (with _inspired suffix)
+        # This ensures consistency across the frontend
+        poem.cultural_mode = submission.cultural_mode
+
     except ValueError as e:
         # If cultural mode is invalid, return a 400 error
         raise HTTPException(
