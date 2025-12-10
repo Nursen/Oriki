@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Character encoding and viewport settings for responsive design -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Oriki - Discover your Yoruba praise name through an interactive cultural quiz">
+
+    <!-- Page title -->
+    <title>Oriki - Your Yoruba Praise Name</title>
+
+    <!-- Stylesheet link -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Main header with app title -->
+    <header class="app-header">
+        <h1>Oriki</h1>
+        <p class="subtitle">Discover Your Yoruba Praise Name</p>
+    </header>
+
+    <!-- Main content area - contains all app sections -->
+    <main class="app-main">
+
+        <!-- Welcome Section - shown initially -->
+        <section id="welcome-section" class="section active">
+            <div class="welcome-content">
+                <h2>Welcome to Oriki</h2>
+                <p class="intro-text">
+                    In Yoruba culture, an Oriki is a praise name that reflects character,
+                    destiny, and identity. Take this journey to discover your unique Oriki
+                    based on your personality and values.
+                </p>
+                <p class="instructions">
+                    Answer a few questions about yourself, and we'll generate a personalized
+                    Oriki that celebrates who you are.
+                </p>
+                <button id="start-quiz-btn" class="btn btn-primary">Begin Your Journey</button>
+            </div>
+        </section>
+
+        <!-- Quiz Section - hidden initially, shown when quiz starts -->
+        <section id="quiz-section" class="section hidden">
+            <div class="quiz-content">
+                <!-- Progress indicator -->
+                <div class="quiz-progress">
+                    <p class="progress-text">Question <span id="current-question">1</span> of <span id="total-questions">5</span></p>
+                    <div class="progress-bar">
+                        <div id="progress-fill" class="progress-fill"></div>
+                    </div>
+                </div>
+
+                <!-- Question display area -->
+                <div class="question-container">
+                    <h2 id="question-text" class="question-text">Question will appear here</h2>
+
+                    <!-- Answer options container -->
+                    <div id="answer-options" class="answer-options">
+                        <!-- Answer buttons will be dynamically inserted here -->
+                    </div>
+                </div>
+
+                <!-- Navigation buttons -->
+                <div class="quiz-navigation">
+                    <button id="prev-btn" class="btn btn-secondary" disabled>Previous</button>
+                    <button id="next-btn" class="btn btn-primary" disabled>Next</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Results Section - hidden initially, shown when quiz completes -->
+        <section id="results-section" class="section hidden">
+            <div class="results-content">
+                <h2>Your Oriki</h2>
+
+                <!-- Display the generated Oriki -->
+                <div class="oriki-display">
+                    <h3 id="oriki-name" class="oriki-name">Your praise name will appear here</h3>
+                    <p id="oriki-meaning" class="oriki-meaning">The meaning and significance will be explained here</p>
+                </div>
+
+                <!-- Additional context or cultural information -->
+                <div class="oriki-context">
+                    <h4>About Your Oriki</h4>
+                    <p id="oriki-details" class="oriki-details">
+                        Detailed explanation of your Oriki based on your responses
+                    </p>
+                </div>
+
+                <!-- Action buttons -->
+                <div class="results-actions">
+                    <button id="share-btn" class="btn btn-secondary">Share Your Oriki</button>
+                    <button id="restart-btn" class="btn btn-primary">Take Quiz Again</button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer with cultural acknowledgment -->
+    <footer class="app-footer">
+        <p class="acknowledgment">
+            This app honors the rich cultural heritage of the Yoruba people.
+            Oriki are sacred cultural artifacts, and we approach them with respect and reverence.
+        </p>
+        <p class="copyright">
+            &copy; 2025 Oriki Project
+        </p>
+    </footer>
+
+    <!-- JavaScript file link - placed at end of body for performance -->
+    <script src="app.js"></script>
+</body>
+</html>
