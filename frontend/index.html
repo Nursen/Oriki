@@ -70,27 +70,59 @@
 
         <!-- Results Section - hidden initially, shown when quiz completes -->
         <section id="results-section" class="section hidden">
+            <!-- Loading overlay - shown while generating results -->
+            <div id="loading-overlay" class="loading-overlay">
+                <div class="loading-content">
+                    <div class="spinner"></div>
+                    <p class="loading-message">Creating your personalized Oriki...</p>
+                    <p class="loading-submessage">Take a deep breath. Your journey is being honored.</p>
+                </div>
+            </div>
+
             <div class="results-content">
                 <h2>Your Oriki</h2>
 
-                <!-- Display the generated Oriki -->
-                <div class="oriki-display">
-                    <h3 id="oriki-name" class="oriki-name">Your praise name will appear here</h3>
-                    <p id="oriki-meaning" class="oriki-meaning">The meaning and significance will be explained here</p>
+                <!-- Poem Display - the generated praise poetry -->
+                <div class="poem-container">
+                    <h3>Your Praise Poetry</h3>
+                    <div id="poem-lines" class="poem-lines">
+                        <!-- Poem lines will be inserted here dynamically -->
+                    </div>
                 </div>
 
-                <!-- Additional context or cultural information -->
-                <div class="oriki-context">
-                    <h4>About Your Oriki</h4>
-                    <p id="oriki-details" class="oriki-details">
-                        Detailed explanation of your Oriki based on your responses
+                <!-- Affirmations List - personalized affirmations -->
+                <div class="affirmations-container">
+                    <h3>Your Daily Affirmations</h3>
+                    <p class="affirmations-intro">Carry these words with you as reminders of your strength and purpose.</p>
+                    <ul id="affirmations-list" class="affirmations-list">
+                        <!-- Affirmation items will be inserted here dynamically -->
+                    </ul>
+                </div>
+
+                <!-- Audio Player Section - placeholder for future audio integration -->
+                <div class="audio-container">
+                    <h3>Listen to Your Oriki</h3>
+                    <p class="audio-description">Hear your Oriki spoken with reverence and power.</p>
+                    <div id="audio-player" class="audio-player-placeholder">
+                        <p class="coming-soon">Audio narration coming soon</p>
+                        <!-- Future: <audio controls> element will go here -->
+                    </div>
+                </div>
+
+                <!-- Cultural Disclaimer - shown for Yoruba mode -->
+                <div id="cultural-disclaimer" class="cultural-disclaimer hidden">
+                    <h4>Cultural Note</h4>
+                    <p>
+                        This Oriki honors Yoruba traditions while adapting them for a modern context.
+                        Traditional Oriki are sacred cultural artifacts passed down through generations.
+                        We approach this tradition with deep respect and reverence.
                     </p>
                 </div>
 
                 <!-- Action buttons -->
                 <div class="results-actions">
+                    <button id="start-over-btn" class="btn btn-primary">Start Over</button>
                     <button id="share-btn" class="btn btn-secondary">Share Your Oriki</button>
-                    <button id="restart-btn" class="btn btn-primary">Take Quiz Again</button>
                 </div>
             </div>
         </section>

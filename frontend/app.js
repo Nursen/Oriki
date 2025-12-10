@@ -125,7 +125,7 @@ const elements = {
     startQuizBtn: document.getElementById('start-quiz-btn'),
     prevBtn: document.getElementById('prev-btn'),
     nextBtn: document.getElementById('next-btn'),
-    restartBtn: document.getElementById('restart-btn'),
+    startOverBtn: document.getElementById('start-over-btn'),
     shareBtn: document.getElementById('share-btn'),
 
     // Quiz elements
@@ -135,10 +135,12 @@ const elements = {
     totalQuestionsSpan: document.getElementById('total-questions'),
     progressFill: document.getElementById('progress-fill'),
 
-    // Results elements
-    orikiName: document.getElementById('oriki-name'),
-    orikiMeaning: document.getElementById('oriki-meaning'),
-    orikiDetails: document.getElementById('oriki-details')
+    // Results elements - updated for new structure
+    loadingOverlay: document.getElementById('loading-overlay'),
+    poemLines: document.getElementById('poem-lines'),
+    affirmationsList: document.getElementById('affirmations-list'),
+    audioPlayer: document.getElementById('audio-player'),
+    culturalDisclaimer: document.getElementById('cultural-disclaimer')
 };
 
 // ============================================================================
@@ -152,7 +154,7 @@ function initializeApp() {
     elements.startQuizBtn.addEventListener('click', startQuiz);
     elements.prevBtn.addEventListener('click', previousQuestion);
     elements.nextBtn.addEventListener('click', nextQuestion);
-    elements.restartBtn.addEventListener('click', restartQuiz);
+    elements.startOverBtn.addEventListener('click', restartQuiz);
     elements.shareBtn.addEventListener('click', shareOriki);
 
     console.log('Oriki Quiz app initialized successfully');
@@ -515,51 +517,115 @@ function showValidationError() {
 function submitQuiz() {
     console.log('Quiz submitted! Answers:', quizState.answers);
 
-    // Show loading state on the submit button
-    elements.nextBtn.textContent = 'Generating your Oriki...';
-    elements.nextBtn.disabled = true;
+    // Show the results section with loading state
+    showSection(elements.resultsSection);
+    showLoadingState();
 
-    // TODO: In the next task, we'll add the API call here
+    // TODO: In the next task, we'll add the real API call here
     // For now, simulate a delay and show mock results
     setTimeout(() => {
-        showMockResults();
+        // Mock response data that matches our API structure
+        const mockResponse = {
+            poem: {
+                poem_lines: [
+                    'You are the dawn breaking over still waters,',
+                    'Strength wrapped in wisdom, light in darkness.',
+                    'Your voice carries the weight of mountains,',
+                    'Yet moves with the grace of flowing rivers.',
+                    'In you, the old ways meet new horizons.'
+                ],
+                cultural_mode: 'yoruba'
+            },
+            affirmations: {
+                affirmations: [
+                    'I carry wisdom from generations past and courage for paths ahead',
+                    'My strength is gentle, my resolve unshakeable',
+                    'I honor my roots while reaching for new heights',
+                    'I speak truth with compassion and lead with integrity',
+                    'I am a bridge between tradition and transformation',
+                    'My presence brings light to those around me',
+                    'I trust my inner voice and follow my authentic path'
+                ]
+            }
+        };
+
+        displayResults(mockResponse);
     }, 2000);
 }
 
 // ============================================================================
-// RESULTS DISPLAY - Show the generated Oriki (mock for now)
+// LOADING STATE - Show/hide loading overlay
 // ============================================================================
-function showMockResults() {
-    // Mock result data (we'll replace this with real API response later)
-    const mockOriki = {
-        name: 'Olóyè Àjàgbó',
-        meaning: 'Noble One Who Conquers',
-        details: 'Your Oriki reflects your strength, wisdom, and leadership. Like the river that shapes the land, you bring change and growth wherever you go.'
-    };
+function showLoadingState() {
+    // Show the loading overlay
+    elements.loadingOverlay.classList.remove('hidden');
+    elements.loadingOverlay.classList.add('active');
+}
 
-    // Update the results section with the data
-    elements.orikiName.textContent = mockOriki.name;
-    elements.orikiMeaning.textContent = mockOriki.meaning;
-    elements.orikiDetails.textContent = mockOriki.details;
+function hideLoadingState() {
+    // Hide the loading overlay with a smooth transition
+    elements.loadingOverlay.classList.remove('active');
+    elements.loadingOverlay.classList.add('hidden');
+}
 
-    // Show the results section
-    showSection(elements.resultsSection);
+// ============================================================================
+// RESULTS DISPLAY - Populate and show the generated Oriki results
+// ============================================================================
+function displayResults(data) {
+    // Hide the loading state
+    hideLoadingState();
 
-    // Reset the submit button for next time
-    elements.nextBtn.textContent = 'Next';
-    elements.nextBtn.disabled = true;
+    // Extract data from the API response
+    const poemLines = data.poem.poem_lines;
+    const culturalMode = data.poem.cultural_mode;
+    const affirmations = data.affirmations.affirmations;
+
+    // Populate poem lines
+    elements.poemLines.innerHTML = ''; // Clear any existing content
+    poemLines.forEach(line => {
+        const lineElement = document.createElement('p');
+        lineElement.className = 'poem-line';
+        lineElement.textContent = line;
+        elements.poemLines.appendChild(lineElement);
+    });
+
+    // Populate affirmations list
+    elements.affirmationsList.innerHTML = ''; // Clear any existing content
+    affirmations.forEach(affirmation => {
+        const listItem = document.createElement('li');
+        listItem.className = 'affirmation-item';
+        listItem.textContent = affirmation;
+        elements.affirmationsList.appendChild(listItem);
+    });
+
+    // Show cultural disclaimer if in Yoruba mode
+    if (culturalMode === 'yoruba') {
+        elements.culturalDisclaimer.classList.remove('hidden');
+    } else {
+        elements.culturalDisclaimer.classList.add('hidden');
+    }
+
+    // Log results for debugging
+    console.log('Results displayed:', {
+        poemLineCount: poemLines.length,
+        affirmationCount: affirmations.length,
+        culturalMode: culturalMode
+    });
 }
 
 // ============================================================================
 // SHARE FUNCTIONALITY - Share the Oriki (placeholder)
 // ============================================================================
 function shareOriki() {
-    // Get the Oriki name and meaning
-    const orikiName = elements.orikiName.textContent;
-    const orikiMeaning = elements.orikiMeaning.textContent;
+    // Get the poem lines and first affirmation
+    const poemLines = Array.from(elements.poemLines.children)
+        .map(el => el.textContent)
+        .join('\n');
 
-    // Create share text
-    const shareText = `My Oriki is ${orikiName} - ${orikiMeaning}`;
+    const firstAffirmation = elements.affirmationsList.children[0]?.textContent || '';
+
+    // Create share text with poem and a sample affirmation
+    const shareText = `My Oriki (Praise Poetry):\n\n${poemLines}\n\n"${firstAffirmation}"`;
 
     // Try to use the Web Share API if available (modern browsers)
     if (navigator.share) {
