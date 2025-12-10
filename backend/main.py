@@ -10,7 +10,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 
 # Import our configuration settings
-from config import settings
+from backend.config import settings
 
 # Import our API routes
 from backend.api.routes import router as api_router
@@ -73,6 +73,6 @@ if __name__ == "__main__":
     uvicorn.run(
         "main:app",
         host="0.0.0.0",
-        port=settings.PORT,
+        port=settings.API_PORT,
         reload=True
     )

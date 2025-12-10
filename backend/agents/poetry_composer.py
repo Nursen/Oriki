@@ -19,7 +19,7 @@ from backend.config import settings
 
 
 # Initialize the LLM with structured output capabilities
-# Using temperature 0.9 for creative, poetic language
+# Using temperature 0.7 for balanced creativity with cultural safety
 llm = ChatOpenAI(
     model=settings.OPENAI_MODEL,
     temperature=0.7,  # Balanced creativity with cultural safety constraints
