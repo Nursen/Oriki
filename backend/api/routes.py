@@ -7,16 +7,19 @@ Oriki generation process, tying together all three agents in sequence.
 
 from fastapi import APIRouter, HTTPException, status
 from typing import Dict, Any
+import base64
 
 # Import all our models
 from backend.models.quiz import QuizSubmission
 from backend.models.generation import GenerationResponse
 from backend.models.quiz_config import ALL_QUESTIONS
+from backend.models.audio import AudioRequest, AudioResponse
 
-# Import all three agents
+# Import all agents
 from backend.agents.theme_extractor import extract_themes
 from backend.agents.poetry_composer import compose_poem
 from backend.agents.affirmation_generator import generate_affirmations
+from backend.agents.audio_renderer import generate_audio, estimate_duration
 
 
 # Create the APIRouter - this will be included in the main FastAPI app
@@ -219,3 +222,66 @@ async def generation_health_check() -> Dict[str, str]:
         "service": "oriki-generation-api",
         "version": "1.0"
     }
+
+
+# ============================================================================
+# AUDIO GENERATION ENDPOINT
+# ============================================================================
+
+@router.post(
+    "/audio",
+    response_model=AudioResponse,
+    status_code=status.HTTP_200_OK,
+    summary="Convert text to audio",
+    description="Converts poem and affirmations text to MP3 audio using OpenAI TTS"
+)
+async def generate_audio_endpoint(request: AudioRequest) -> AudioResponse:
+    """
+    Converts text (poem + affirmations) to audio using OpenAI's TTS API.
+
+    This endpoint takes text input and a voice selection, then generates
+    MP3 audio that can be played back in the frontend. The audio is
+    returned as a base64-encoded string for easy JSON transmission.
+
+    Common use case: After generating a poem and affirmations, combine
+    them into a single text string and send to this endpoint to create
+    an audio version for meditation or daily listening.
+
+    Args:
+        request: AudioRequest containing text and voice selection
+
+    Returns:
+        AudioResponse: Base64-encoded MP3 audio and estimated duration
+
+    Raises:
+        HTTPException: If audio generation fails
+    """
+
+    try:
+        # STEP 1: Generate the audio using OpenAI TTS
+        # This calls the audio_renderer agent to create MP3 bytes
+        audio_bytes = await generate_audio(
+            text=request.text,
+            voice=request.voice
+        )
+
+    except Exception as e:
+        # If audio generation fails, return a 500 error with details
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Audio generation failed: {str(e)}"
+        )
+
+    # STEP 2: Encode the audio bytes to base64 for JSON transmission
+    # Base64 encoding converts binary data to a text string
+    audio_base64 = base64.b64encode(audio_bytes).decode('utf-8')
+
+    # STEP 3: Estimate the audio duration based on text length
+    # This helps the frontend display progress bars or playback time
+    duration = estimate_duration(request.text)
+
+    # STEP 4: Return the complete response with audio and metadata
+    return AudioResponse(
+        audio_base64=audio_base64,
+        duration_seconds=duration
+    )
