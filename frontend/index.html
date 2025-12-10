@@ -22,6 +22,17 @@
     <!-- Main content area - contains all app sections -->
     <main class="app-main">
 
+        <!-- Error Message Container - shown when errors occur -->
+        <div id="error-container" class="error-container hidden">
+            <div class="error-content">
+                <div class="error-icon">!</div>
+                <div class="error-message-wrapper">
+                    <p id="error-message" class="error-message"></p>
+                    <button id="error-dismiss-btn" class="error-dismiss-btn">Dismiss</button>
+                </div>
+            </div>
+        </div>
+
         <!-- Welcome Section - shown initially -->
         <section id="welcome-section" class="section active">
             <div class="welcome-content">
@@ -76,6 +87,18 @@
                     <div class="spinner"></div>
                     <p class="loading-message">Creating your personalized Oriki...</p>
                     <p class="loading-submessage">Take a deep breath. Your journey is being honored.</p>
+                    <button id="cancel-loading-btn" class="btn btn-tertiary cancel-loading-btn hidden">Cancel</button>
+                </div>
+            </div>
+
+            <!-- Error display in results section -->
+            <div id="results-error" class="results-error hidden">
+                <div class="error-icon-large">!</div>
+                <h3>Something Went Wrong</h3>
+                <p id="results-error-message" class="results-error-message"></p>
+                <div class="error-actions">
+                    <button id="try-again-btn" class="btn btn-primary">Try Again</button>
+                    <button id="back-to-quiz-btn" class="btn btn-secondary">Back to Quiz</button>
                 </div>
             </div>
 

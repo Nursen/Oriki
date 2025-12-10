@@ -188,6 +188,13 @@ const quizState = {
 };
 
 // ============================================================================
+// API REQUEST MANAGEMENT - Track ongoing requests for timeout/cancellation
+// ============================================================================
+// Store the current AbortController to allow request cancellation
+let currentAbortController = null;
+let timeoutWarningShown = false;
+
+// ============================================================================
 // DOM ELEMENT REFERENCES - Cache DOM elements for better performance
 // ============================================================================
 // We get these once at the start and reuse them throughout the app
@@ -210,6 +217,18 @@ const elements = {
     currentQuestionSpan: document.getElementById('current-question'),
     totalQuestionsSpan: document.getElementById('total-questions'),
     progressFill: document.getElementById('progress-fill'),
+
+    // Error elements
+    errorContainer: document.getElementById('error-container'),
+    errorMessage: document.getElementById('error-message'),
+    errorDismissBtn: document.getElementById('error-dismiss-btn'),
+
+    // Results error elements
+    resultsError: document.getElementById('results-error'),
+    resultsErrorMessage: document.getElementById('results-error-message'),
+    tryAgainBtn: document.getElementById('try-again-btn'),
+    backToQuizBtn: document.getElementById('back-to-quiz-btn'),
+    cancelLoadingBtn: document.getElementById('cancel-loading-btn'),
 
     // Results elements - updated for new structure
     loadingOverlay: document.getElementById('loading-overlay'),
@@ -239,6 +258,12 @@ function initializeApp() {
     elements.nextBtn.addEventListener('click', nextQuestion);
     elements.startOverBtn.addEventListener('click', restartQuiz);
     elements.shareBtn.addEventListener('click', shareOriki);
+
+    // Attach error handling event listeners
+    elements.errorDismissBtn.addEventListener('click', hideError);
+    elements.tryAgainBtn.addEventListener('click', retryQuizSubmission);
+    elements.backToQuizBtn.addEventListener('click', goBackToQuiz);
+    elements.cancelLoadingBtn.addEventListener('click', cancelAPIRequest);
 
     // Attach audio player event listeners
     elements.generateAudioBtn.addEventListener('click', handleGenerateAudio);
@@ -487,8 +512,8 @@ function handleMultiSelectChange(questionId, maxSelections) {
         // Update selectedValues to only include allowed selections
         selectedValues.splice(maxSelections);
 
-        // Show a helpful message
-        alert(`You can only select up to ${maxSelections} options.`);
+        // Show a helpful message using styled error
+        showError(`You can only select up to ${maxSelections} options.`);
     }
 
     // Save the selected values to state
@@ -613,8 +638,65 @@ function showValidationError() {
         errorMessage = 'Please write at least 10 characters.';
     }
 
-    // Simple alert for now (could be styled better later)
-    alert(errorMessage);
+    // Use styled error message instead of alert
+    showError(errorMessage);
+}
+
+// ============================================================================
+// ERROR HANDLING FUNCTIONS - Show/hide styled error messages
+// ============================================================================
+
+/**
+ * Show an inline error message at the top of the page
+ * This replaces the use of alert() for better UX
+ */
+function showError(message) {
+    // Set the error message text
+    elements.errorMessage.textContent = message;
+
+    // Show the error container
+    elements.errorContainer.classList.remove('hidden');
+
+    // Scroll to top so user can see the error
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    // Auto-dismiss after 8 seconds (but user can dismiss earlier)
+    setTimeout(() => {
+        hideError();
+    }, 8000);
+}
+
+/**
+ * Hide the inline error message
+ */
+function hideError() {
+    elements.errorContainer.classList.add('hidden');
+}
+
+/**
+ * Show an error in the results section when API calls fail
+ * This allows users to retry without losing their quiz progress
+ */
+function showResultsError(message) {
+    // Hide loading overlay
+    hideLoadingState();
+
+    // Set the error message
+    elements.resultsErrorMessage.textContent = message;
+
+    // Show the error display
+    elements.resultsError.classList.remove('hidden');
+
+    // Hide the results content
+    elements.resultsSection.querySelector('.results-content').classList.add('hidden');
+}
+
+/**
+ * Hide the results error and show results content
+ */
+function hideResultsError() {
+    elements.resultsError.classList.add('hidden');
+    elements.resultsSection.querySelector('.results-content').classList.remove('hidden');
 }
 
 // ============================================================================
@@ -623,25 +705,58 @@ function showValidationError() {
 
 /**
  * Submit quiz data to the backend API for Oriki generation
+ * Includes timeout handling (60 seconds) and cancellation support
  * @param {Object} quizData - The quiz submission matching QuizSubmission schema
  * @returns {Promise<Object>} - API response with poem, affirmations, and themes
  */
 async function submitQuizToAPI(quizData) {
+    // Create an AbortController to allow request cancellation
+    currentAbortController = new AbortController();
+    const signal = currentAbortController.signal;
+
+    // Set up timeout (60 seconds)
+    const TIMEOUT_MS = 60000;
+    const WARNING_MS = 15000; // Show warning after 15 seconds
+
+    // Show cancel button and warning message after 15 seconds
+    const warningTimeout = setTimeout(() => {
+        if (!timeoutWarningShown) {
+            const loadingMessage = elements.loadingOverlay.querySelector('.loading-message');
+            if (loadingMessage) {
+                loadingMessage.textContent = 'This is taking longer than expected...';
+            }
+            elements.cancelLoadingBtn.classList.remove('hidden');
+            timeoutWarningShown = true;
+        }
+    }, WARNING_MS);
+
+    // Set up the actual timeout (60 seconds)
+    const timeoutId = setTimeout(() => {
+        if (currentAbortController) {
+            currentAbortController.abort();
+        }
+    }, TIMEOUT_MS);
+
     try {
-        // Make POST request to the /generate endpoint
+        // Make POST request to the /generate endpoint with timeout signal
         const response = await fetch(`${API_BASE_URL}/api/v1/generate`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(quizData)
+            body: JSON.stringify(quizData),
+            signal: signal
         });
+
+        // Clear the timeout since we got a response
+        clearTimeout(timeoutId);
+        clearTimeout(warningTimeout);
 
         // Check if the request was successful
         if (!response.ok) {
             // Try to get error message from response
             const errorData = await response.json().catch(() => ({}));
-            throw new Error(errorData.detail || `API error: ${response.status}`);
+            throw new Error(errorData.detail || `Server error: ${response.status}. Please try again.`);
         }
 
         // Parse and return the JSON response
@@ -649,26 +764,47 @@ async function submitQuizToAPI(quizData) {
         return data;
 
     } catch (error) {
+        // Clear timeouts
+        clearTimeout(timeoutId);
+        clearTimeout(warningTimeout);
+
         // Log the error for debugging
         console.error('Error submitting quiz to API:', error);
 
-        // Check for network errors vs API errors
-        if (error.message.includes('Failed to fetch')) {
-            throw new Error('Cannot connect to the server. Please make sure the backend is running.');
+        // Handle different error types
+        if (error.name === 'AbortError') {
+            throw new Error('Request timed out. The server is taking too long to respond. Please try again.');
+        } else if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
+            throw new Error('Cannot connect to the server. Please check your internet connection and try again.');
         }
 
         // Re-throw the error to be handled by the caller
         throw error;
+    } finally {
+        // Reset timeout warning flag
+        timeoutWarningShown = false;
+        elements.cancelLoadingBtn.classList.add('hidden');
     }
 }
 
 /**
  * Generate audio from text using the backend TTS API
+ * Includes timeout handling (60 seconds)
  * @param {string} text - The text to convert to speech
  * @param {string} voice - The voice to use (default: 'alloy')
  * @returns {Promise<Object>} - API response with audio_base64 and duration_seconds
  */
 async function generateAudioFromAPI(text, voice = 'alloy') {
+    // Create an AbortController for timeout
+    const abortController = new AbortController();
+    const signal = abortController.signal;
+
+    // Set up timeout (60 seconds for audio generation)
+    const TIMEOUT_MS = 60000;
+    const timeoutId = setTimeout(() => {
+        abortController.abort();
+    }, TIMEOUT_MS);
+
     try {
         // Make POST request to the /audio endpoint
         const response = await fetch(`${API_BASE_URL}/api/v1/audio`, {
@@ -679,14 +815,18 @@ async function generateAudioFromAPI(text, voice = 'alloy') {
             body: JSON.stringify({
                 text: text,
                 voice: voice
-            })
+            }),
+            signal: signal
         });
+
+        // Clear the timeout
+        clearTimeout(timeoutId);
 
         // Check if the request was successful
         if (!response.ok) {
             // Try to get error message from response
             const errorData = await response.json().catch(() => ({}));
-            throw new Error(errorData.detail || `API error: ${response.status}`);
+            throw new Error(errorData.detail || `Audio generation failed: ${response.status}`);
         }
 
         // Parse and return the JSON response
@@ -694,12 +834,17 @@ async function generateAudioFromAPI(text, voice = 'alloy') {
         return data;
 
     } catch (error) {
+        // Clear timeout
+        clearTimeout(timeoutId);
+
         // Log the error for debugging
         console.error('Error generating audio from API:', error);
 
-        // Check for network errors vs API errors
-        if (error.message.includes('Failed to fetch')) {
-            throw new Error('Cannot connect to the server. Please make sure the backend is running.');
+        // Handle different error types
+        if (error.name === 'AbortError') {
+            throw new Error('Audio generation timed out. Please try again.');
+        } else if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
+            throw new Error('Cannot connect to the server. Please check your internet connection.');
         }
 
         // Re-throw the error to be handled by the caller
@@ -716,6 +861,9 @@ async function submitQuiz() {
     // Show the results section with loading state
     showSection(elements.resultsSection);
     showLoadingState();
+
+    // Hide any previous errors
+    hideResultsError();
 
     try {
         // Build the quiz submission object matching the QuizSubmission schema
@@ -742,17 +890,11 @@ async function submitQuiz() {
         displayResults(response);
 
     } catch (error) {
-        // Hide loading state
-        hideLoadingState();
-
-        // Show user-friendly error message
-        const errorMessage = error.message || 'An unexpected error occurred. Please try again.';
-        alert(`Error: ${errorMessage}`);
-
         console.error('Failed to submit quiz:', error);
 
-        // Optionally, go back to the last question so user can try again
-        // Or stay on results page with an error message
+        // Show user-friendly error message in results section
+        const errorMessage = error.message || 'An unexpected error occurred. Please try again.';
+        showResultsError(errorMessage);
     }
 }
 
@@ -775,41 +917,87 @@ function hideLoadingState() {
 // RESULTS DISPLAY - Populate and show the generated Oriki results
 // ============================================================================
 function displayResults(data) {
-    // Hide the loading state
-    hideLoadingState();
+    try {
+        // Validate the API response structure
+        if (!data || typeof data !== 'object') {
+            throw new Error('Invalid response from server. Please try again.');
+        }
 
-    // Extract data from the API response
-    const poemLines = data.poem.poem_lines;
-    const culturalMode = data.poem.cultural_mode;
-    const affirmations = data.affirmations.affirmations;
+        if (!data.poem || !data.affirmations) {
+            throw new Error('Incomplete response from server. Please try again.');
+        }
 
-    // Populate poem lines
-    elements.poemLines.innerHTML = ''; // Clear any existing content
-    poemLines.forEach(line => {
-        const lineElement = document.createElement('p');
-        lineElement.className = 'poem-line';
-        lineElement.textContent = line;
-        elements.poemLines.appendChild(lineElement);
-    });
+        // Extract data from the API response with validation
+        const poemLines = data.poem.poem_lines || [];
+        const culturalMode = data.poem.cultural_mode || 'secular';
+        const affirmations = data.affirmations.affirmations || [];
 
-    // Populate affirmations list
-    elements.affirmationsList.innerHTML = ''; // Clear any existing content
-    affirmations.forEach(affirmation => {
-        const listItem = document.createElement('li');
-        listItem.className = 'affirmation-item';
-        listItem.textContent = affirmation;
-        elements.affirmationsList.appendChild(listItem);
-    });
+        // Validate that we have content
+        if (poemLines.length === 0) {
+            throw new Error('No poem was generated. Please try again.');
+        }
 
-    // Display cultural disclaimer based on cultural mode
-    displayCulturalInfo(culturalMode);
+        if (affirmations.length === 0) {
+            console.warn('No affirmations were generated');
+        }
 
-    // Log results for debugging
-    console.log('Results displayed:', {
-        poemLineCount: poemLines.length,
-        affirmationCount: affirmations.length,
-        culturalMode: culturalMode
-    });
+        // Hide the loading state
+        hideLoadingState();
+
+        // Make sure results content is visible
+        hideResultsError();
+
+        // Populate poem lines
+        elements.poemLines.innerHTML = ''; // Clear any existing content
+        poemLines.forEach(line => {
+            // Skip empty lines
+            if (!line || line.trim() === '') {
+                return;
+            }
+
+            const lineElement = document.createElement('p');
+            lineElement.className = 'poem-line';
+            lineElement.textContent = line;
+            elements.poemLines.appendChild(lineElement);
+        });
+
+        // Populate affirmations list
+        elements.affirmationsList.innerHTML = ''; // Clear any existing content
+        if (affirmations.length > 0) {
+            affirmations.forEach(affirmation => {
+                // Skip empty affirmations
+                if (!affirmation || affirmation.trim() === '') {
+                    return;
+                }
+
+                const listItem = document.createElement('li');
+                listItem.className = 'affirmation-item';
+                listItem.textContent = affirmation;
+                elements.affirmationsList.appendChild(listItem);
+            });
+        } else {
+            // Show a message if no affirmations
+            const noAffirmationsMessage = document.createElement('li');
+            noAffirmationsMessage.className = 'affirmation-item';
+            noAffirmationsMessage.textContent = 'Your Oriki speaks for itself. Let its words guide you.';
+            elements.affirmationsList.appendChild(noAffirmationsMessage);
+        }
+
+        // Display cultural disclaimer based on cultural mode
+        displayCulturalInfo(culturalMode);
+
+        // Log results for debugging
+        console.log('Results displayed:', {
+            poemLineCount: poemLines.length,
+            affirmationCount: affirmations.length,
+            culturalMode: culturalMode
+        });
+
+    } catch (error) {
+        console.error('Error displaying results:', error);
+        // Show error in results section
+        showResultsError(error.message || 'Failed to display your Oriki. Please try again.');
+    }
 }
 
 // ============================================================================
@@ -881,6 +1069,12 @@ function handleGenerateAudio() {
 
 // Main function to generate audio from poem and affirmations
 async function generateAudio(poemLines, affirmations) {
+    // Validate inputs
+    if (!poemLines || poemLines.trim() === '') {
+        showError('No poem text available for audio generation.');
+        return;
+    }
+
     // Store the text for later use
     currentPoemText = poemLines;
     currentAffirmationsText = affirmations;
@@ -898,6 +1092,11 @@ async function generateAudio(poemLines, affirmations) {
         const response = await generateAudioFromAPI(fullText, 'alloy');
 
         console.log('Audio generated successfully. Duration:', response.duration_seconds, 'seconds');
+
+        // Validate the response
+        if (!response.audio_base64) {
+            throw new Error('No audio data received from server.');
+        }
 
         // Convert base64 audio to a data URL and set it as the audio source
         const audioDataUrl = `data:audio/mpeg;base64,${response.audio_base64}`;
@@ -918,9 +1117,9 @@ async function generateAudio(poemLines, affirmations) {
         elements.audioLoading.classList.add('hidden');
         elements.generateAudioBtn.classList.remove('hidden');
 
-        // Show user-friendly error message
+        // Show user-friendly error message using styled error
         const errorMessage = error.message || 'Failed to generate audio. Please try again.';
-        alert(`Error: ${errorMessage}`);
+        showError(errorMessage);
     }
 }
 
@@ -958,22 +1157,27 @@ function downloadAudio() {
 
     // Check if audio source is available
     if (!audio.src) {
-        alert('No audio available to download.');
+        showError('No audio available to download. Please generate audio first.');
         return;
     }
 
-    // Create a temporary link element to trigger download
-    const link = document.createElement('a');
-    link.href = audio.src;
-    link.download = 'my-oriki-audio.mp3'; // Default filename
-    link.style.display = 'none';
+    try {
+        // Create a temporary link element to trigger download
+        const link = document.createElement('a');
+        link.href = audio.src;
+        link.download = 'my-oriki-audio.mp3'; // Default filename
+        link.style.display = 'none';
 
-    // Append to body, click, and remove
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+        // Append to body, click, and remove
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
 
-    console.log('Audio download triggered');
+        console.log('Audio download triggered');
+    } catch (error) {
+        console.error('Error downloading audio:', error);
+        showError('Failed to download audio. Please try again.');
+    }
 }
 
 // Reset audio player when starting over
@@ -1044,13 +1248,71 @@ function fallbackShare(text) {
 
     try {
         document.execCommand('copy');
-        alert('Oriki copied to clipboard! Share it with your friends.');
+        showError('Oriki copied to clipboard! Share it with your friends.');
     } catch (err) {
         console.error('Failed to copy:', err);
-        alert('Unable to copy. Please manually copy your Oriki.');
+        showError('Unable to copy. Please manually select and copy your Oriki text.');
     }
 
     document.body.removeChild(textarea);
+}
+
+// ============================================================================
+// ERROR RECOVERY FUNCTIONS - Allow users to retry after errors
+// ============================================================================
+
+/**
+ * Retry the quiz submission after an error
+ * This keeps the user's answers and just retries the API call
+ */
+function retryQuizSubmission() {
+    console.log('Retrying quiz submission...');
+
+    // Hide the error display
+    hideResultsError();
+
+    // Show loading state
+    showLoadingState();
+
+    // Resubmit the quiz with existing answers
+    submitQuiz();
+}
+
+/**
+ * Go back to the quiz after an error
+ * This allows users to review/change their answers
+ */
+function goBackToQuiz() {
+    console.log('Going back to quiz...');
+
+    // Go back to the last question
+    quizState.currentQuestionIndex = quizState.totalQuestions - 1;
+
+    // Show quiz section
+    showSection(elements.quizSection);
+
+    // Render the last question
+    renderQuestion(quizState.currentQuestionIndex);
+}
+
+/**
+ * Cancel the current API request
+ * This allows users to stop a long-running request
+ */
+function cancelAPIRequest() {
+    console.log('Cancelling API request...');
+
+    // Abort the current request
+    if (currentAbortController) {
+        currentAbortController.abort();
+        currentAbortController = null;
+    }
+
+    // Hide loading overlay
+    hideLoadingState();
+
+    // Show error message
+    showResultsError('Request cancelled. You can try again when you\'re ready.');
 }
 
 // ============================================================================
