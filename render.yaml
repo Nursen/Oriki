@@ -1,0 +1,25 @@
+# Render Blueprint Configuration for Oriki API
+# This file defines how Render should deploy the Oriki backend service
+
+services:
+  # Web service configuration for the FastAPI backend
+  - type: web
+    name: oriki-api
+    runtime: python
+    # Specify the backend directory as the root for this service
+    rootDir: backend
+    # Build command - install all Python dependencies
+    buildCommand: pip install -r requirements.txt
+    # Start command - run the FastAPI app with uvicorn
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    # Environment variables required for the application
+    envVars:
+      # OpenAI API key - REQUIRED for LLM functionality
+      # User must set this in the Render dashboard
+      - key: OPENAI_API_KEY
+        sync: false  # Must be manually set by user
+      # Python version specification
+      - key: PYTHON_VERSION
+        value: "3.11"
+    # Health check endpoint to verify service is running
+    healthCheckPath: /health
