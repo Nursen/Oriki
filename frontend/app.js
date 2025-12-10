@@ -8,13 +8,12 @@
 // API CONFIGURATION - Backend API endpoint
 // ============================================================================
 // DEPLOYMENT GUIDE:
-// 1. For LOCAL DEVELOPMENT: Use localhost (current setting)
-// 2. For PRODUCTION: Replace with your Render backend URL after deploying
-//    Example: const API_BASE_URL = 'https://oriki-api.onrender.com';
-//
-// IMPORTANT: Update this URL after deploying backend to Render!
-const API_BASE_URL = 'http://localhost:8000';
-// Production: const API_BASE_URL = 'https://oriki-api.onrender.com';
+// The API URL is automatically detected based on the environment.
+// - localhost: Uses local backend (http://localhost:8000)
+// - production: Uses Render backend (update the URL below after deploying)
+const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+    ? 'http://localhost:8000'
+    : 'https://oriki-api.onrender.com';  // UPDATE THIS after Render deployment
 
 // ============================================================================
 // QUIZ DATA - Hardcoded questions (will fetch from API later)
