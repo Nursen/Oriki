@@ -5,6 +5,13 @@
 // It's designed to be educational and easy to understand for beginners.
 
 // ============================================================================
+// API CONFIGURATION - Backend API endpoint
+// ============================================================================
+// This is where our Flask backend is running
+// Update this URL when deploying to production
+const API_BASE_URL = 'http://localhost:8000';
+
+// ============================================================================
 // QUIZ DATA - Hardcoded questions (will fetch from API later)
 // ============================================================================
 const quizQuestions = [
@@ -528,45 +535,142 @@ function showValidationError() {
 }
 
 // ============================================================================
+// API SERVICE FUNCTIONS - Connect to the backend
+// ============================================================================
+
+/**
+ * Submit quiz data to the backend API for Oriki generation
+ * @param {Object} quizData - The quiz submission matching QuizSubmission schema
+ * @returns {Promise<Object>} - API response with poem, affirmations, and themes
+ */
+async function submitQuizToAPI(quizData) {
+    try {
+        // Make POST request to the /generate endpoint
+        const response = await fetch(`${API_BASE_URL}/api/v1/generate`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(quizData)
+        });
+
+        // Check if the request was successful
+        if (!response.ok) {
+            // Try to get error message from response
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.detail || `API error: ${response.status}`);
+        }
+
+        // Parse and return the JSON response
+        const data = await response.json();
+        return data;
+
+    } catch (error) {
+        // Log the error for debugging
+        console.error('Error submitting quiz to API:', error);
+
+        // Check for network errors vs API errors
+        if (error.message.includes('Failed to fetch')) {
+            throw new Error('Cannot connect to the server. Please make sure the backend is running.');
+        }
+
+        // Re-throw the error to be handled by the caller
+        throw error;
+    }
+}
+
+/**
+ * Generate audio from text using the backend TTS API
+ * @param {string} text - The text to convert to speech
+ * @param {string} voice - The voice to use (default: 'alloy')
+ * @returns {Promise<Object>} - API response with audio_base64 and duration_seconds
+ */
+async function generateAudioFromAPI(text, voice = 'alloy') {
+    try {
+        // Make POST request to the /audio endpoint
+        const response = await fetch(`${API_BASE_URL}/api/v1/audio`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                text: text,
+                voice: voice
+            })
+        });
+
+        // Check if the request was successful
+        if (!response.ok) {
+            // Try to get error message from response
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.detail || `API error: ${response.status}`);
+        }
+
+        // Parse and return the JSON response
+        const data = await response.json();
+        return data;
+
+    } catch (error) {
+        // Log the error for debugging
+        console.error('Error generating audio from API:', error);
+
+        // Check for network errors vs API errors
+        if (error.message.includes('Failed to fetch')) {
+            throw new Error('Cannot connect to the server. Please make sure the backend is running.');
+        }
+
+        // Re-throw the error to be handled by the caller
+        throw error;
+    }
+}
+
+// ============================================================================
 // QUIZ SUBMISSION - Collect answers and submit
 // ============================================================================
-function submitQuiz() {
+async function submitQuiz() {
     console.log('Quiz submitted! Answers:', quizState.answers);
 
     // Show the results section with loading state
     showSection(elements.resultsSection);
     showLoadingState();
 
-    // TODO: In the next task, we'll add the real API call here
-    // For now, simulate a delay and show mock results
-    setTimeout(() => {
-        // Mock response data that matches our API structure
-        const mockResponse = {
-            poem: {
-                poem_lines: [
-                    'You are the dawn breaking over still waters,',
-                    'Strength wrapped in wisdom, light in darkness.',
-                    'Your voice carries the weight of mountains,',
-                    'Yet moves with the grace of flowing rivers.',
-                    'In you, the old ways meet new horizons.'
-                ],
-                cultural_mode: 'yoruba'
-            },
-            affirmations: {
-                affirmations: [
-                    'I carry wisdom from generations past and courage for paths ahead',
-                    'My strength is gentle, my resolve unshakeable',
-                    'I honor my roots while reaching for new heights',
-                    'I speak truth with compassion and lead with integrity',
-                    'I am a bridge between tradition and transformation',
-                    'My presence brings light to those around me',
-                    'I trust my inner voice and follow my authentic path'
-                ]
-            }
+    try {
+        // Build the quiz submission object matching the QuizSubmission schema
+        // This structure matches what the backend API expects
+        const quizSubmission = {
+            top_values: quizState.answers.top_values || [],
+            greatest_strength: quizState.answers.greatest_strength || '',
+            aspirational_trait: quizState.answers.aspirational_trait || '',
+            metaphor_archetype: quizState.answers.metaphor_archetype || '',
+            energy_style: quizState.answers.energy_style || '',
+            life_focus: quizState.answers.life_focus || '',
+            cultural_mode: quizState.answers.cultural_mode || '',
+            free_write_letter: quizState.answers.free_write_letter || ''
         };
 
-        displayResults(mockResponse);
-    }, 2000);
+        console.log('Sending quiz data to API:', quizSubmission);
+
+        // Call the API to generate the Oriki
+        const response = await submitQuizToAPI(quizSubmission);
+
+        console.log('Received response from API:', response);
+
+        // Display the results
+        displayResults(response);
+
+    } catch (error) {
+        // Hide loading state
+        hideLoadingState();
+
+        // Show user-friendly error message
+        const errorMessage = error.message || 'An unexpected error occurred. Please try again.';
+        alert(`Error: ${errorMessage}`);
+
+        console.error('Failed to submit quiz:', error);
+
+        // Optionally, go back to the last question so user can try again
+        // Or stay on results page with an error message
+    }
 }
 
 // ============================================================================
@@ -667,9 +771,15 @@ async function generateAudio(poemLines, affirmations) {
     elements.audioLoading.classList.remove('hidden');
 
     try {
-        // TODO: In Task 2.6, we'll wire this to the real API
-        // For now, simulate API call with a delay
-        await simulateAudioGeneration(fullText);
+        // Call the API to generate audio from the text
+        // Using the 'alloy' voice which is warm and pleasant
+        const response = await generateAudioFromAPI(fullText, 'alloy');
+
+        console.log('Audio generated successfully. Duration:', response.duration_seconds, 'seconds');
+
+        // Convert base64 audio to a data URL and set it as the audio source
+        const audioDataUrl = `data:audio/mpeg;base64,${response.audio_base64}`;
+        elements.audioElement.src = audioDataUrl;
 
         // Hide loading state
         elements.audioLoading.classList.add('hidden');
@@ -677,7 +787,8 @@ async function generateAudio(poemLines, affirmations) {
         // Show the audio player
         elements.audioPlayer.classList.remove('hidden');
 
-        console.log('Audio generated successfully');
+        console.log('Audio player ready');
+
     } catch (error) {
         console.error('Error generating audio:', error);
 
@@ -685,22 +796,10 @@ async function generateAudio(poemLines, affirmations) {
         elements.audioLoading.classList.add('hidden');
         elements.generateAudioBtn.classList.remove('hidden');
 
-        // Show error message to user
-        alert('Failed to generate audio. Please try again.');
+        // Show user-friendly error message
+        const errorMessage = error.message || 'Failed to generate audio. Please try again.';
+        alert(`Error: ${errorMessage}`);
     }
-}
-
-// Simulate audio generation (placeholder for real API call)
-async function simulateAudioGeneration(text) {
-    // Simulate a 2-second API call delay
-    return new Promise((resolve) => {
-        setTimeout(() => {
-            // For now, we'll create a placeholder audio source
-            // In Task 2.6, this will be replaced with the actual base64 audio from the API
-            console.log('Simulating audio generation for text:', text);
-            resolve();
-        }, 2000);
-    });
 }
 
 // Toggle play/pause for the audio
