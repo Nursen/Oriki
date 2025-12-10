@@ -1,0 +1,432 @@
+/* ============================================
+   ORIKI - CSS DESIGN SYSTEM
+   A warm ritual experience with earth tones
+   ============================================ */
+
+/* ============================================
+   CSS CUSTOM PROPERTIES (Variables)
+   ============================================ */
+:root {
+  /* Color Palette - Warm Earth Tones */
+  --color-bg-primary: #f5f1e8;        /* Warm cream background */
+  --color-bg-secondary: #faf8f3;      /* Lighter cream */
+  --color-bg-card: #ffffff;           /* Pure white for cards */
+
+  --color-terracotta: #c86240;        /* Clay/red earth */
+  --color-terracotta-dark: #a84d30;   /* Darker terracotta for hover */
+  --color-terracotta-light: #e8a090;  /* Light terracotta accent */
+
+  --color-gold: #d4a574;              /* Gold accent */
+  --color-gold-dark: #b8894f;         /* Darker gold */
+
+  --color-brown-deep: #4a3428;        /* Deep brown for text */
+  --color-brown-medium: #6b5447;      /* Medium brown for secondary text */
+  --color-brown-light: #9d8b7f;       /* Light brown for subtle text */
+
+  /* Typography */
+  --font-serif: Georgia, 'Times New Roman', serif;
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+
+  --font-size-base: 16px;
+  --font-size-lg: 18px;
+  --font-size-xl: 24px;
+  --font-size-2xl: 32px;
+  --font-size-3xl: 48px;
+
+  --line-height-tight: 1.2;
+  --line-height-base: 1.5;
+  --line-height-relaxed: 1.8;
+
+  /* Spacing Scale */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-2xl: 48px;
+  --space-3xl: 64px;
+
+  /* Border & Effects */
+  --border-radius-sm: 4px;
+  --border-radius-md: 8px;
+  --border-radius-lg: 12px;
+
+  --shadow-sm: 0 2px 4px rgba(74, 52, 40, 0.08);
+  --shadow-md: 0 4px 12px rgba(74, 52, 40, 0.12);
+  --shadow-lg: 0 8px 24px rgba(74, 52, 40, 0.15);
+
+  --transition-base: all 0.3s ease;
+}
+
+/* ============================================
+   RESET & BASE STYLES
+   ============================================ */
+
+/* Simple reset for consistent spacing */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Body: warm background with readable text */
+body {
+  font-family: var(--font-sans);
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-base);
+  color: var(--color-brown-deep);
+  background-color: var(--color-bg-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ============================================
+   TYPOGRAPHY
+   ============================================ */
+
+/* Serif headings for emphasis and ritual feeling */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-serif);
+  font-weight: 600;
+  line-height: var(--line-height-tight);
+  color: var(--color-brown-deep);
+  margin-bottom: var(--space-md);
+}
+
+h1 {
+  font-size: var(--font-size-3xl);
+  margin-bottom: var(--space-lg);
+}
+
+h2 {
+  font-size: var(--font-size-2xl);
+}
+
+h3 {
+  font-size: var(--font-size-xl);
+}
+
+/* Paragraphs and body text */
+p {
+  margin-bottom: var(--space-md);
+  line-height: var(--line-height-relaxed);
+}
+
+/* Emphasis on meaningful lines (quotes, verses) */
+.verse, .meaningful-line {
+  font-family: var(--font-serif);
+  font-size: var(--font-size-lg);
+  line-height: var(--line-height-relaxed);
+  color: var(--color-terracotta);
+  font-style: italic;
+  padding: var(--space-lg);
+  border-left: 3px solid var(--color-gold);
+  margin: var(--space-lg) 0;
+}
+
+/* ============================================
+   LAYOUT CLASSES
+   ============================================ */
+
+/* Container: centered content with max-width */
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 var(--space-lg);
+}
+
+/* Section: full-height centered content */
+.section {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: var(--space-2xl) var(--space-lg);
+}
+
+/* Grid layout for responsive content */
+.grid {
+  display: grid;
+  gap: var(--space-lg);
+}
+
+/* Flex utilities */
+.flex {
+  display: flex;
+  gap: var(--space-md);
+}
+
+.flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ============================================
+   COMPONENT CLASSES
+   ============================================ */
+
+/* Card: content containers with warm background */
+.card {
+  background-color: var(--color-bg-card);
+  border-radius: var(--border-radius-lg);
+  padding: var(--space-xl);
+  box-shadow: var(--shadow-md);
+  transition: var(--transition-base);
+}
+
+.card:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
+}
+
+/* Base button styles */
+.btn {
+  display: inline-block;
+  padding: var(--space-md) var(--space-xl);
+  font-family: var(--font-sans);
+  font-size: var(--font-size-base);
+  font-weight: 500;
+  text-align: center;
+  text-decoration: none;
+  border: none;
+  border-radius: var(--border-radius-md);
+  cursor: pointer;
+  transition: var(--transition-base);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.btn:active {
+  transform: translateY(0);
+}
+
+/* Primary button: terracotta for main actions */
+.btn-primary {
+  background-color: var(--color-terracotta);
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: var(--color-terracotta-dark);
+}
+
+/* Secondary button: gold accent for secondary actions */
+.btn-secondary {
+  background-color: var(--color-gold);
+  color: var(--color-brown-deep);
+}
+
+.btn-secondary:hover {
+  background-color: var(--color-gold-dark);
+}
+
+/* Tertiary button: outlined for subtle actions */
+.btn-tertiary {
+  background-color: transparent;
+  color: var(--color-terracotta);
+  border: 2px solid var(--color-terracotta);
+  box-shadow: none;
+}
+
+.btn-tertiary:hover {
+  background-color: var(--color-terracotta);
+  color: white;
+}
+
+/* ============================================
+   UTILITY CLASSES
+   ============================================ */
+
+/* Visibility utilities */
+.hidden {
+  display: none !important;
+}
+
+.visible {
+  display: block;
+}
+
+/* Active state for sections/tabs */
+.active {
+  display: block;
+}
+
+/* Text alignment */
+.text-center {
+  text-align: center;
+}
+
+.text-left {
+  text-align: left;
+}
+
+.text-right {
+  text-align: right;
+}
+
+/* Spacing utilities */
+.mt-sm { margin-top: var(--space-sm); }
+.mt-md { margin-top: var(--space-md); }
+.mt-lg { margin-top: var(--space-lg); }
+.mt-xl { margin-top: var(--space-xl); }
+
+.mb-sm { margin-bottom: var(--space-sm); }
+.mb-md { margin-bottom: var(--space-md); }
+.mb-lg { margin-bottom: var(--space-lg); }
+.mb-xl { margin-bottom: var(--space-xl); }
+
+/* ============================================
+   HEADER & FOOTER
+   ============================================ */
+
+/* Header: minimal with warm accent */
+header {
+  background-color: var(--color-bg-secondary);
+  padding: var(--space-lg) 0;
+  box-shadow: var(--shadow-sm);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+header h1 {
+  margin: 0;
+  color: var(--color-terracotta);
+  text-align: center;
+}
+
+/* Footer: subtle and grounding */
+footer {
+  background-color: var(--color-bg-secondary);
+  padding: var(--space-xl) 0;
+  text-align: center;
+  color: var(--color-brown-light);
+  font-size: 14px;
+  margin-top: var(--space-3xl);
+  border-top: 1px solid var(--color-gold);
+}
+
+footer p {
+  margin: var(--space-sm) 0;
+}
+
+/* ============================================
+   FORM ELEMENTS
+   ============================================ */
+
+/* Input fields with warm styling */
+input[type="text"],
+input[type="email"],
+textarea,
+select {
+  width: 100%;
+  padding: var(--space-md);
+  font-family: var(--font-sans);
+  font-size: var(--font-size-base);
+  color: var(--color-brown-deep);
+  background-color: var(--color-bg-card);
+  border: 2px solid var(--color-brown-light);
+  border-radius: var(--border-radius-md);
+  transition: var(--transition-base);
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: var(--color-terracotta);
+  box-shadow: 0 0 0 3px rgba(200, 98, 64, 0.1);
+}
+
+textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+/* Label styling */
+label {
+  display: block;
+  margin-bottom: var(--space-sm);
+  font-weight: 500;
+  color: var(--color-brown-medium);
+}
+
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+
+/* Tablet and mobile adjustments */
+@media (max-width: 768px) {
+  :root {
+    --font-size-3xl: 36px;
+    --font-size-2xl: 28px;
+    --font-size-xl: 20px;
+  }
+
+  .container {
+    padding: 0 var(--space-md);
+  }
+
+  .section {
+    padding: var(--space-xl) var(--space-md);
+  }
+
+  .card {
+    padding: var(--space-lg);
+  }
+}
+
+/* Small mobile adjustments */
+@media (max-width: 480px) {
+  .btn {
+    width: 100%;
+    padding: var(--space-md);
+  }
+}
+
+/* ============================================
+   LOADING & ANIMATION
+   ============================================ */
+
+/* Simple fade-in animation for dynamic content */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+/* Loading spinner */
+.spinner {
+  border: 3px solid var(--color-bg-primary);
+  border-top: 3px solid var(--color-terracotta);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+  margin: var(--space-lg) auto;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
