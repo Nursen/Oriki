@@ -12,6 +12,9 @@ import uvicorn
 # Import our configuration settings
 from config import settings
 
+# Import our API routes
+from backend.api.routes import router as api_router
+
 # Initialize the FastAPI application
 app = FastAPI(
     title="Oriki API",
@@ -28,6 +31,12 @@ app.add_middleware(
     allow_methods=["*"],  # Allow all HTTP methods (GET, POST, etc.)
     allow_headers=["*"],  # Allow all headers
 )
+
+
+# Include our API routes
+# This connects all the generation endpoints (poem, affirmations, themes)
+# to the main FastAPI application at the /api/v1 prefix
+app.include_router(api_router)
 
 
 # Root endpoint - provides basic information about the API
