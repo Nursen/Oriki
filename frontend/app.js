@@ -195,6 +195,22 @@ let currentAbortController = null;
 let timeoutWarningShown = false;
 
 // ============================================================================
+// LOADING MESSAGES - Calming messages that rotate during generation
+// ============================================================================
+const loadingMessages = [
+    "Creating your personalized Oriki...",
+    "Honoring your journey...",
+    "Weaving your story...",
+    "Finding the right words...",
+    "Celebrating your essence...",
+    "Crafting your praise poetry...",
+    "Gathering wisdom for your words..."
+];
+
+// Variable to store the message rotation interval
+let loadingMessageInterval = null;
+
+// ============================================================================
 // DOM ELEMENT REFERENCES - Cache DOM elements for better performance
 // ============================================================================
 // We get these once at the start and reuse them throughout the app
@@ -298,6 +314,9 @@ function showSection(sectionToShow) {
 // QUIZ FLOW FUNCTIONS
 // ============================================================================
 
+// Track navigation direction for animations
+let navigationDirection = 'next'; // 'next' or 'prev'
+
 // Start the quiz - called when user clicks "Begin Your Journey"
 function startQuiz() {
     // Reset quiz state for a fresh start
@@ -311,16 +330,53 @@ function startQuiz() {
     renderQuestion(0);
 }
 
-// Restart the quiz - called when user clicks "Take Quiz Again"
+// Restart the quiz - called when user clicks "Start Over"
 function restartQuiz() {
-    // Reset everything and go back to welcome
+    // Reset quiz state completely
     quizState.currentQuestionIndex = 0;
     quizState.answers = {};
+    navigationDirection = 'next';
 
     // Reset audio player state
     resetAudioPlayer();
 
+    // Clear any error states
+    hideError();
+    hideResultsError();
+
+    // Clear loading intervals if any are running
+    if (loadingMessageInterval) {
+        clearInterval(loadingMessageInterval);
+        loadingMessageInterval = null;
+    }
+
+    // Cancel any ongoing API requests
+    if (currentAbortController) {
+        currentAbortController.abort();
+        currentAbortController = null;
+    }
+
+    // Reset timeout warning flag
+    timeoutWarningShown = false;
+
+    // Hide loading overlay if visible
+    hideLoadingState();
+
+    // Clear results content
+    if (elements.poemLines) {
+        elements.poemLines.innerHTML = '';
+    }
+    if (elements.affirmationsList) {
+        elements.affirmationsList.innerHTML = '';
+    }
+
+    // Return to welcome section with smooth transition
     showSection(elements.welcomeSection);
+
+    // Scroll to top smoothly
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    console.log('Quiz reset complete - returning to welcome screen');
 }
 
 // ============================================================================
@@ -329,6 +385,17 @@ function restartQuiz() {
 function renderQuestion(index) {
     // Get the current question data
     const question = quizQuestions[index];
+
+    // Add transition animation class based on navigation direction
+    const questionContainer = elements.quizSection.querySelector('.question-container');
+    if (questionContainer) {
+        // Remove any existing animation classes
+        questionContainer.classList.remove('question-enter-next', 'question-enter-prev');
+
+        // Add new animation class based on direction
+        const animationClass = navigationDirection === 'next' ? 'question-enter-next' : 'question-enter-prev';
+        questionContainer.classList.add(animationClass);
+    }
 
     // Update the progress indicators
     updateProgress();
@@ -566,6 +633,9 @@ function nextQuestion() {
         return;
     }
 
+    // Set navigation direction for animation
+    navigationDirection = 'next';
+
     // Check if this is the last question
     if (quizState.currentQuestionIndex === quizState.totalQuestions - 1) {
         // Submit the quiz
@@ -580,6 +650,9 @@ function nextQuestion() {
 // Move to the previous question
 function previousQuestion() {
     if (quizState.currentQuestionIndex > 0) {
+        // Set navigation direction for animation
+        navigationDirection = 'prev';
+
         quizState.currentQuestionIndex--;
         renderQuestion(quizState.currentQuestionIndex);
     }
@@ -899,15 +972,47 @@ async function submitQuiz() {
 }
 
 // ============================================================================
-// LOADING STATE - Show/hide loading overlay
+// LOADING STATE - Show/hide loading overlay with rotating messages
 // ============================================================================
 function showLoadingState() {
     // Show the loading overlay
     elements.loadingOverlay.classList.remove('hidden');
     elements.loadingOverlay.classList.add('active');
+
+    // Start with the first message
+    const loadingMessageElement = elements.loadingOverlay.querySelector('.loading-message');
+    let currentMessageIndex = 0;
+    if (loadingMessageElement) {
+        loadingMessageElement.textContent = loadingMessages[currentMessageIndex];
+    }
+
+    // Rotate through messages every 3.5 seconds
+    loadingMessageInterval = setInterval(() => {
+        currentMessageIndex = (currentMessageIndex + 1) % loadingMessages.length;
+        if (loadingMessageElement) {
+            // Add a subtle fade effect when changing messages
+            loadingMessageElement.style.opacity = '0.5';
+            setTimeout(() => {
+                loadingMessageElement.textContent = loadingMessages[currentMessageIndex];
+                loadingMessageElement.style.opacity = '1';
+            }, 200);
+        }
+    }, 3500); // Change message every 3.5 seconds
 }
 
 function hideLoadingState() {
+    // Clear the message rotation interval
+    if (loadingMessageInterval) {
+        clearInterval(loadingMessageInterval);
+        loadingMessageInterval = null;
+    }
+
+    // Reset message opacity
+    const loadingMessageElement = elements.loadingOverlay.querySelector('.loading-message');
+    if (loadingMessageElement) {
+        loadingMessageElement.style.opacity = '1';
+    }
+
     // Hide the loading overlay with a smooth transition
     elements.loadingOverlay.classList.remove('active');
     elements.loadingOverlay.classList.add('hidden');

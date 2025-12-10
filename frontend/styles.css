@@ -135,7 +135,7 @@ p {
   padding: 0 var(--space-lg);
 }
 
-/* Section: full-height centered content */
+/* Section: full-height centered content with smooth transitions */
 .section {
   min-height: 100vh;
   display: flex;
@@ -143,6 +143,17 @@ p {
   justify-content: center;
   align-items: center;
   padding: var(--space-2xl) var(--space-lg);
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.section.active {
+  opacity: 1;
+}
+
+.section.hidden {
+  opacity: 0;
+  pointer-events: none;
 }
 
 /* Grid layout for responsive content */
@@ -413,6 +424,49 @@ label {
 
 .fade-in {
   animation: fadeIn 0.5s ease-in-out;
+}
+
+/* Quiz question transitions - subtle fade and slide */
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Animation classes for question transitions */
+.question-enter-next {
+  animation: slideInRight 0.25s ease-out;
+}
+
+.question-enter-prev {
+  animation: slideInLeft 0.25s ease-out;
 }
 
 /* Loading spinner */
@@ -831,6 +885,7 @@ label {
   color: var(--color-terracotta);
   margin-top: var(--space-lg);
   font-weight: 500;
+  transition: opacity 0.2s ease-in-out;
 }
 
 .loading-submessage {
