@@ -792,6 +792,58 @@ label {
   margin-bottom: var(--space-xl);
 }
 
+/* Return User Prompt - shown when saved Oriki is found */
+.return-user-container {
+  max-width: 700px;
+  width: 100%;
+  margin: 0 auto;
+  text-align: center;
+  padding: var(--space-2xl);
+  background-color: var(--color-bg-card);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-md);
+}
+
+.return-user-container h2 {
+  color: var(--color-terracotta);
+  margin-bottom: var(--space-lg);
+}
+
+.return-user-message {
+  font-size: var(--font-size-lg);
+  line-height: var(--line-height-relaxed);
+  color: var(--color-brown-deep);
+  margin-bottom: var(--space-xl);
+}
+
+.return-user-actions {
+  display: flex;
+  gap: var(--space-md);
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.return-user-actions .btn {
+  min-width: 180px;
+}
+
+/* Responsive adjustments for return user prompt */
+@media (max-width: 480px) {
+  .return-user-container {
+    padding: var(--space-xl) var(--space-lg);
+  }
+
+  .return-user-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .return-user-actions .btn {
+    width: 100%;
+    min-width: auto;
+  }
+}
+
 /* Quiz Section */
 #quiz-section {
   display: flex;

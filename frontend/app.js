@@ -326,7 +326,194 @@ function initializeApp() {
     // Set up keyboard navigation for quiz accessibility
     setupKeyboardNavigation();
 
+    // Check for saved Oriki from previous visit
+    checkForSavedOriki();
+
     console.log('Oriki Quiz app initialized successfully');
+}
+
+// ============================================================================
+// LOCALSTORAGE PERSISTENCE - Save and load Oriki for returning users
+// ============================================================================
+
+// Storage key for saved Oriki data
+const STORAGE_KEY = 'oriki_saved_results';
+
+/**
+ * Check if there's a saved Oriki from a previous visit
+ * If found, show the return user prompt
+ */
+function checkForSavedOriki() {
+    const savedOriki = loadOrikiFromStorage();
+
+    if (savedOriki) {
+        console.log('Found saved Oriki from previous visit');
+        showReturnUserPrompt(savedOriki);
+    }
+}
+
+/**
+ * Save generated Oriki to localStorage
+ * @param {Object} results - The API response containing poem, affirmations, etc.
+ */
+function saveOrikiToStorage(results) {
+    try {
+        // Extract the data we want to save
+        const dataToSave = {
+            poem: results.poem.poem_lines || [],
+            affirmations: results.affirmations.affirmations || [],
+            culturalMode: results.poem.cultural_mode || 'secular',
+            themes: results.themes || {},
+            savedAt: new Date().toISOString()
+        };
+
+        // Save to localStorage as JSON string
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave));
+
+        console.log('Oriki saved to localStorage');
+    } catch (error) {
+        // localStorage might be disabled or full - fail silently
+        console.warn('Failed to save Oriki to localStorage:', error);
+    }
+}
+
+/**
+ * Load saved Oriki from localStorage
+ * @returns {Object|null} - Saved Oriki data or null if none exists
+ */
+function loadOrikiFromStorage() {
+    try {
+        const savedData = localStorage.getItem(STORAGE_KEY);
+
+        if (!savedData) {
+            return null;
+        }
+
+        // Parse the JSON data
+        const parsedData = JSON.parse(savedData);
+
+        // Validate that we have the required data
+        if (!parsedData.poem || !parsedData.affirmations) {
+            console.warn('Saved Oriki data is incomplete');
+            return null;
+        }
+
+        return parsedData;
+    } catch (error) {
+        // Invalid JSON or other error - fail silently
+        console.warn('Failed to load Oriki from localStorage:', error);
+        return null;
+    }
+}
+
+/**
+ * Clear saved Oriki from localStorage
+ */
+function clearSavedOriki() {
+    try {
+        localStorage.removeItem(STORAGE_KEY);
+        console.log('Saved Oriki cleared from localStorage');
+    } catch (error) {
+        console.warn('Failed to clear saved Oriki:', error);
+    }
+}
+
+/**
+ * Show the return user prompt when saved Oriki is found
+ * @param {Object} savedOriki - The saved Oriki data
+ */
+function showReturnUserPrompt(savedOriki) {
+    // Hide the normal welcome content
+    const welcomeContent = document.querySelector('.welcome-content');
+    if (welcomeContent) {
+        welcomeContent.style.display = 'none';
+    }
+
+    // Create the return user prompt container
+    const returnUserContainer = document.createElement('div');
+    returnUserContainer.id = 'return-user-container';
+    returnUserContainer.className = 'return-user-container';
+
+    // Format the saved date nicely
+    const savedDate = new Date(savedOriki.savedAt);
+    const formattedDate = savedDate.toLocaleDateString('en-US', {
+        month: 'long',
+        day: 'numeric',
+        year: 'numeric'
+    });
+
+    // Build the HTML for the prompt
+    returnUserContainer.innerHTML = `
+        <h2>Welcome Back</h2>
+        <p class="return-user-message">
+            You have a saved Oriki from ${formattedDate}.
+            Would you like to revisit it, or start fresh with a new journey?
+        </p>
+        <div class="return-user-actions">
+            <button id="view-saved-oriki-btn" class="btn btn-primary">View Last Oriki</button>
+            <button id="start-fresh-btn" class="btn btn-secondary">Start Fresh</button>
+        </div>
+    `;
+
+    // Add to welcome section
+    elements.welcomeSection.appendChild(returnUserContainer);
+
+    // Attach event listeners to the new buttons
+    document.getElementById('view-saved-oriki-btn').addEventListener('click', () => {
+        viewSavedOriki(savedOriki);
+    });
+
+    document.getElementById('start-fresh-btn').addEventListener('click', () => {
+        startFreshJourney();
+    });
+}
+
+/**
+ * Display the saved Oriki in the results section
+ * @param {Object} savedOriki - The saved Oriki data
+ */
+function viewSavedOriki(savedOriki) {
+    console.log('Displaying saved Oriki');
+
+    // Hide welcome section, show results section
+    showSection(elements.resultsSection);
+
+    // Reconstruct the API response format for displayResults
+    const reconstructedResponse = {
+        poem: {
+            poem_lines: savedOriki.poem,
+            cultural_mode: savedOriki.culturalMode
+        },
+        affirmations: {
+            affirmations: savedOriki.affirmations
+        },
+        themes: savedOriki.themes
+    };
+
+    // Use the existing displayResults function
+    displayResults(reconstructedResponse);
+}
+
+/**
+ * Start a fresh quiz journey, clearing saved data
+ */
+function startFreshJourney() {
+    console.log('Starting fresh journey');
+
+    // Clear the saved Oriki from localStorage
+    clearSavedOriki();
+
+    // Remove the return user prompt
+    const returnUserContainer = document.getElementById('return-user-container');
+    if (returnUserContainer) {
+        returnUserContainer.remove();
+    }
+
+    // Show the normal welcome content again
+    const welcomeContent = document.querySelector('.welcome-content');
+    if (welcomeContent) {
+        welcomeContent.style.display = 'flex';
+    }
 }
 
 // ============================================================================
@@ -537,6 +724,21 @@ function restartQuiz() {
     }
     if (elements.affirmationsList) {
         elements.affirmationsList.innerHTML = '';
+    }
+
+    // Clear saved Oriki from localStorage
+    clearSavedOriki();
+
+    // Remove return user prompt if it exists
+    const returnUserContainer = document.getElementById('return-user-container');
+    if (returnUserContainer) {
+        returnUserContainer.remove();
+    }
+
+    // Ensure normal welcome content is visible
+    const welcomeContent = document.querySelector('.welcome-content');
+    if (welcomeContent) {
+        welcomeContent.style.display = 'flex';
     }
 
     // Return to welcome section with smooth transition
@@ -1349,6 +1551,9 @@ function displayResults(data) {
 
         // Display cultural disclaimer based on cultural mode
         displayCulturalInfo(culturalMode);
+
+        // Save the Oriki to localStorage for returning users
+        saveOrikiToStorage(data);
 
         // Log results for debugging
         console.log('Results displayed:', {
