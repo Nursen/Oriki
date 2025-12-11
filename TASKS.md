@@ -77,23 +77,65 @@
 
 ## Future Features (Post-MVP)
 
-### Tier 1: Quick Wins
-- [ ] Regenerate variations button
-- [ ] Voice selection for TTS
-- [ ] Copy poem to clipboard
-- [ ] Ceremonial welcome screen with warm framing
-- [ ] Micro-introductions before key questions
+### Infrastructure (Post-Deployment Priority)
+Items to implement after MVP is live and stable.
 
-### Tier 2: Enhanced Experience
-- [ ] "Who Sees You?" question (relational/communal)
-- [ ] "Legacy" question (aspirational identity)
-- [ ] Affirmative micro-responses after certain answers
-- [ ] Ambient audio mixing
-- [ ] Shareable links
-- [ ] Animated visual background
+- [ ] **Environment-Specific Config** - `.env.development` / `.env.production` pattern for safe local dev vs production switching
+- [ ] **Retry Logic with Fallback** - Auto-retry on LLM parse failures (max 2 retries, temperature +0.1 each retry)
+- [ ] **Prompt Caching** - Enable OpenAI prompt caching for 50-90% cost reduction on repeated system prompts
+- [ ] **Pre-commit Hooks** - Black, isort, flake8 (skip mypy - overkill for this project size)
+- [ ] **Deployment Verification Script** - `scripts/verify_deployment.sh` to test health, CORS, and generation endpoint
 
-### Tier 3: Growth Features
-- [ ] User accounts
-- [ ] Mode-specific quiz variations
-- [ ] Additional cultural modes
+### Tier 1: Quick Wins (High Impact, Low Effort)
+Each item completable in 2-4 hours.
+
+- [ ] **Name Input for "Name Only" Pronouns** - Show name input field when user selects "name_only" option. Use name in poetry generation.
+- [ ] **Pre-Generation Reflection Pause** - 15-second breathing moment with ambient sound before results appear. "Take a breath. Your oriki is being composed..."
+- [ ] **Ritual Framing for Audio Playback** - "Create Sacred Space" button that dims UI, centers audio player, creates focused listening experience
+- [ ] **Few-Shot Examples in Prompts** - Add 2-3 exemplar poems per cultural mode to `poetry_composer.py` for consistent quality
+- [ ] **Regenerate Variations Button** - Button on results page to generate a new variation with same inputs
+- [ ] **Voice Selection for TTS** - Dropdown to choose OpenAI voice (alloy, echo, fable, onyx, nova, shimmer)
+- [ ] **Copy Poem to Clipboard** - Copy button with "Copied!" feedback
+- [ ] **Ceremonial Welcome Screen** - Warm framing on landing page explaining the sacred nature of praise poetry
+- [ ] **Offline Save via LocalStorage** - Save generated oriki (poem, affirmations, mode) to localStorage. On return, prompt: "Welcome back. Would you like to revisit your last Oriki?" Zero backend cost, improves retention.
+- [ ] **Keyboard Navigation for Quiz** - Full keyboard accessibility: number keys (1-9) select options, Enter advances, Backspace goes back. Add visual focus indicators. Accessibility win + power-user experience.
+
+### Tier 2: Enhanced Experience (Medium Effort)
+Features that deepen the experience. 4-8 hours each.
+
+- [ ] **Micro-introductions Before Key Questions** - Brief contextual text before important quiz questions
+- [ ] **Contextual Metaphor Expansion** - Optional "Learn more" that shows brief poetic story explaining metaphor meanings in generated poetry
+- [ ] **Spoken Pronunciation Guide** - Audio clips of traditional Yoruba sounds/words for Yoruba mode (requires authentic recordings)
+- [ ] **"Who Sees You?" Question** - Relational/communal question: "Who in your life truly sees you?"
+- [ ] **"Legacy" Question** - Aspirational identity: "What do you hope to be remembered for?"
+- [ ] **Affirmative Micro-responses** - Warm acknowledgments after certain quiz answers
+- [ ] **Ambient Audio Mixing** - Background audio that plays with TTS narration
+- [ ] **Shareable Links** - Generate unique link to share your oriki (requires backend storage)
+- [ ] **Animated Visual Background** - Subtle, culturally-appropriate animations during results
+- [ ] **"Gift An Oriki" Mode** - Toggle at start: "Is this for you, or someone you want to celebrate?" If gifting, launch a separate quiz about the recipient: "What values do you admire in them?", "What metaphor captures their spirit?", etc. Include giver's name and optional message. Final output: "This Oriki was created for [recipient] by [giver]." Culturally authentic (oriki are traditionally spoken over others by their community).
+- [ ] **"Emotional Weather" Progress Indicator** - Progress bar evolves visually based on user's answers. If someone selects "warrior" energy + "flame" metaphor, colors shift warm. Creates anticipation and emotional continuity throughout the quiz.
+
+### Tier 3: Growth Features (High Effort, Future Vision)
+Major features for if/when the project grows. Not planned.
+
+- [ ] User accounts and saved orikis
+- [ ] Mode-specific quiz variations (different questions per cultural mode)
+- [ ] Additional cultural modes (after consultation with cultural experts)
 - [ ] Multi-language support
+
+---
+
+## Excluded Suggestions (With Reasoning)
+
+The following were evaluated and intentionally excluded:
+
+| Suggestion | Reason for Exclusion |
+|------------|---------------------|
+| Lineage Acknowledgment Question | Appropriation risk too high without extensive cultural consultation. Heritage questions are fraught territory. |
+| 70%+ Test Coverage | Overkill for ~$5/month project. Current manual testing sufficient for scope. |
+| Consolidate Docs to `docs/` | Premature optimization. Documentation sprawl isn't a problem yet. |
+| Semantic Similarity Validator | Over-engineering. No evidence of theme drift issues. Adds latency and embedding costs. |
+| Poetic Coherence Scorer | Doubles LLM cost and latency. Users can regenerate if unhappy. |
+| Sentry Monitoring | Overkill for hobby project. Console logging is sufficient. |
+| Seasonal/Occasion Framing Options | Scope creep. Complicates quiz flow. The free-write question already lets users express context. Revisit if Gift Mode proves popular. |
+| Token/Cost Display for Transparency | Breaks the emotional spell of the experience. Users don't need to think about API costs during their sacred moment. Better for FAQ page. |
