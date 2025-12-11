@@ -367,6 +367,7 @@ function saveOrikiToStorage(results) {
             affirmations: results.affirmations.affirmations || [],
             culturalMode: results.poem.cultural_mode || 'secular',
             themes: results.themes || {},
+            lastSubmission: quizState.lastSubmission || null,
             savedAt: new Date().toISOString()
         };
 
@@ -477,6 +478,13 @@ function showReturnUserPrompt(savedOriki) {
  */
 function viewSavedOriki(savedOriki) {
     console.log('Displaying saved Oriki');
+
+    // Restore the lastSubmission if it exists in saved data
+    // This allows tradition switching to work on loaded Orikis
+    if (savedOriki.lastSubmission) {
+        quizState.lastSubmission = savedOriki.lastSubmission;
+        console.log('Restored quiz submission data for tradition switching');
+    }
 
     // Hide welcome section, show results section
     showSection(elements.resultsSection);
@@ -2061,7 +2069,7 @@ async function switchTradition(newMode) {
 
     // Check if we have a previous submission stored
     if (!quizState.lastSubmission) {
-        showError('No quiz data available. Please take the quiz first.');
+        showError('Quiz data not available for this saved Oriki. Please start a new quiz to try other traditions.');
         return;
     }
 
