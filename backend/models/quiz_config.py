@@ -147,7 +147,21 @@ CULTURAL_MODE_QUESTION = QuizQuestion(
 )
 
 
-# Question 8: Free-Write Letter (text input, not multiple choice)
+# Question 8: Pronouns (single select)
+PRONOUN_QUESTION = QuizQuestion(
+    id="pronouns",
+    text="In your praise poetry, you will be celebrated as:",
+    is_multi_select=False,
+    options=[
+        QuestionOption("he_him", "He/Him"),
+        QuestionOption("she_her", "She/Her"),
+        QuestionOption("they_them", "They/Them"),
+        QuestionOption("name_only", "Name Only (no pronouns)"),
+    ]
+)
+
+
+# Question 9: Free-Write Letter (text input, not multiple choice)
 LETTER_QUESTION = QuizQuestion(
     id="letter",
     text="Write a brief letter to your future self. What do you want to remember about who you are?",
@@ -165,6 +179,7 @@ ALL_QUESTIONS = [
     ENERGY_QUESTION,
     LIFE_FOCUS_QUESTION,
     CULTURAL_MODE_QUESTION,
+    PRONOUN_QUESTION,
     LETTER_QUESTION,
 ]
 
@@ -239,6 +254,7 @@ __all__ = [
     'ENERGY_QUESTION',
     'LIFE_FOCUS_QUESTION',
     'CULTURAL_MODE_QUESTION',
+    'PRONOUN_QUESTION',
     'LETTER_QUESTION',
     'ALL_QUESTIONS',
     'get_question_by_id',

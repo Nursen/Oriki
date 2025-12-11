@@ -81,7 +81,13 @@ class QuizSubmission(BaseModel):
         description="Cultural/spiritual lens for the Oriki"
     )
 
-    # Question 8: Free-Write Letter (text input, max 2000 characters)
+    # Question 8: Pronouns (single select, specific options)
+    pronouns: Literal["he_him", "she_her", "they_them", "name_only"] = Field(
+        ...,
+        description="Pronouns to use in the praise poetry"
+    )
+
+    # Question 9: Free-Write Letter (text input, max 2000 characters)
     free_write_letter: str = Field(
         ...,
         max_length=2000,
@@ -175,6 +181,7 @@ class QuizSubmission(BaseModel):
                 "energy_style": "healer",
                 "life_focus": "spirituality",
                 "cultural_mode": "yoruba_inspired",
+                "pronouns": "she_her",
                 "free_write_letter": "Dear future self, remember that you are strong and capable..."
             }
         }

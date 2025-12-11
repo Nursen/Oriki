@@ -71,6 +71,9 @@ Aspirations: {aspirations}
 Strengths: {strengths}
 Key Themes: {key_themes}
 
+PRONOUN USAGE:
+Use {pronouns} pronouns consistently throughout the poem.
+
 Create praise poetry that:
 1. Uses "The one who..." or "She/He whose..." structure
 2. Repeats opening phrases for rhythm (anaphora)
@@ -78,6 +81,7 @@ Create praise poetry that:
 4. Celebrates the user's actual values and strengths
 5. Builds intensity with each line
 6. Is 4-7 lines long
+7. Uses {pronouns} pronouns consistently
 
 {format_instructions}
 
@@ -124,6 +128,9 @@ Aspirations: {aspirations}
 Strengths: {strengths}
 Key Themes: {key_themes}
 
+PRONOUN USAGE:
+Use {pronouns} pronouns consistently throughout the poem.
+
 Create praise poetry that:
 1. Uses modern, accessible language
 2. Celebrates real human qualities and achievements
@@ -131,6 +138,7 @@ Create praise poetry that:
 4. Affirms without spiritual or religious framing
 5. Feels contemporary and psychologically resonant
 6. Is 4-7 lines long
+7. Uses {pronouns} pronouns consistently
 
 {format_instructions}"""
 
@@ -182,6 +190,9 @@ Aspirations: {aspirations}
 Strengths: {strengths}
 Key Themes: {key_themes}
 
+PRONOUN USAGE:
+Use {pronouns} pronouns consistently throughout the poem.
+
 Create blessing poetry that:
 1. Uses blessing structure: "May you..." or "Let your..."
 2. Incorporates Turkish folk nature metaphors
@@ -189,6 +200,7 @@ Create blessing poetry that:
 4. Has a warm, familial, protective tone
 5. Celebrates the user's path forward
 6. Is 4-7 lines long
+7. Uses {pronouns} pronouns consistently
 
 {format_instructions}"""
 
@@ -246,6 +258,9 @@ Aspirations: {aspirations}
 Strengths: {strengths}
 Key Themes: {key_themes}
 
+PRONOUN USAGE:
+Use {pronouns} pronouns consistently throughout the poem.
+
 Create biblical-style praise poetry that:
 1. Uses scriptural cadence and blessing language
 2. Incorporates biblical metaphors naturally
@@ -253,6 +268,7 @@ Create biblical-style praise poetry that:
 4. Has a reverent, dignified tone
 5. Affirms the user's identity and mission
 6. Is 4-7 lines long
+7. Uses {pronouns} pronouns consistently
 
 {format_instructions}"""
 
@@ -261,7 +277,7 @@ Create biblical-style praise poetry that:
     ), parser
 
 
-async def compose_poem(themes: ThemeData, cultural_mode: str) -> PoemOutput:
+async def compose_poem(themes: ThemeData, cultural_mode: str, pronouns: str = "they_them") -> PoemOutput:
     """
     Generates praise poetry in the specified cultural mode.
 
@@ -272,6 +288,7 @@ async def compose_poem(themes: ThemeData, cultural_mode: str) -> PoemOutput:
     Args:
         themes: ThemeData object containing extracted themes from user's quiz
         cultural_mode: One of "yoruba", "secular", "turkish", or "biblical"
+        pronouns: One of "he_him", "she_her", "they_them", or "name_only"
 
     Returns:
         PoemOutput: Structured poem with lines, mode, and style notes
@@ -300,6 +317,15 @@ async def compose_poem(themes: ThemeData, cultural_mode: str) -> PoemOutput:
     # Build the LangChain chain: prompt -> LLM -> parser
     chain = prompt | llm | parser
 
+    # Convert pronouns to readable format for the prompt
+    pronoun_map = {
+        "he_him": "he/him",
+        "she_her": "she/her",
+        "they_them": "they/them",
+        "name_only": "no pronouns (use 'The one who...' style instead)"
+    }
+    pronoun_instruction = pronoun_map.get(pronouns, "they/them")
+
     # Prepare the input variables from the ThemeData object
     # We convert the ThemeData fields into a dictionary for the prompt
     input_vars = {
@@ -309,7 +335,8 @@ async def compose_poem(themes: ThemeData, cultural_mode: str) -> PoemOutput:
         "identity_markers": ", ".join(themes.identity_markers),
         "aspirations": ", ".join(themes.aspirations),
         "strengths": ", ".join(themes.strengths),
-        "key_themes": ", ".join(themes.key_themes)
+        "key_themes": ", ".join(themes.key_themes),
+        "pronouns": pronoun_instruction
     }
 
     # Invoke the chain and get the structured PoemOutput
