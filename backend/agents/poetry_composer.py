@@ -56,15 +56,13 @@ CRITICAL CULTURAL CONSTRAINTS - FOLLOW EXACTLY:
 5. USE ONLY universal nature metaphors: lion, river, mountain, fire, eagle, sun, tree, wind
 6. DO NOT attempt spiritual associations even with approved metaphors
 
-REQUIRED STRUCTURAL ELEMENTS:
-- Praise-naming structure: "The one who...", "She whose...", "He who walks..."
-- Anaphoric repetition: Repeat opening phrases across lines for rhythm
-- Incremental intensification: Each line builds power
-- Universal nature metaphors that anyone can understand
-- Length: 4-7 lines (focused and powerful)
-- Tone: Unapologetically celebratory, affirming, protective
+YOUR PRIMARY SOURCE MATERIAL:
+The user wrote this letter to their future self:
+{free_write_letter}
 
-USER'S THEMES (use these as your source material):
+Read this letter carefully. This is YOUR MAIN SOURCE for understanding who they are, what they value, and what they dream of. The themes below are extracted from this letter, but always return to the actual letter for authentic language and emotional truth.
+
+EXTRACTED THEMES (supporting material):
 Values: {values}
 Emotional Tone: {emotional_tone}
 Metaphors: {metaphors}
@@ -73,17 +71,41 @@ Aspirations: {aspirations}
 Strengths: {strengths}
 Key Themes: {key_themes}
 
+STRUCTURAL GUIDANCE FOR NARRATIVE FLOW:
+Create a 3-5 line poem with emotional arc and narrative progression:
+
+Line 1: GROUNDING - Establish who they are NOW (use their actual words/context from letter)
+Line 2: MOVEMENT - Show their journey, struggle, or growth (weave in their aspirations)
+Line 3: TRANSFORMATION - Celebrate their strength emerging or vision realized
+Line 4 (optional): AFFIRMATION - Seal their identity with power and protection
+Line 5 (optional): FUTURE BLESSING - Point toward their continuing path
+
+VARY YOUR LINE OPENINGS. Mix structures like:
+- "The one who [action]..."
+- "She/He whose [quality]..."
+- "With [metaphor], she/he..."
+- "Through [struggle], they..."
+- Direct address: "You are [metaphor]"
+
+NOT every line should start "The one who..." - create rhythm through varied repetition.
+
+WEAVING USER'S WORDS:
+- Quote or paraphrase 1-3 phrases directly from their letter
+- Use their actual language when possible (their dreams, fears, hopes)
+- Let their authentic voice shine through the praise structure
+
+EXAMPLE STRUCTURE (adapt to user's content):
+She who walks through doubt with hands still open,
+The river that carves mountains with patient faith,
+You are the fire that learns to warm without burning—
+Blessed in becoming, strong in the unfinished work.
+
 PRONOUN USAGE:
 Use {pronouns} pronouns consistently throughout the poem.
 
-Create praise poetry that:
-1. Uses "The one who..." or "She/He whose..." structure
-2. Repeats opening phrases for rhythm (anaphora)
-3. Uses universal nature metaphors (mountain, river, fire, lion, eagle)
-4. Celebrates the user's actual values and strengths
-5. Builds intensity with each line
-6. Is 4-7 lines long
-7. Uses {pronouns} pronouns consistently
+LENGTH: 3-5 lines (focused and powerful)
+
+TONE: Unapologetically celebratory, affirming, protective
 
 {format_instructions}
 
@@ -107,21 +129,13 @@ def _create_secular_prompt() -> ChatPromptTemplate:
 
     template = """You are composing secular praise poetry with modern, psychological depth.
 
-STYLE GUIDELINES:
-- Modern, grounded language (no religious or spiritual references)
-- Focus on universal human experiences and emotions
-- Affirmative and uplifting tone
-- Contemporary imagery and metaphors
-- Accessible, clear language
-- Length: 4-7 lines
+YOUR PRIMARY SOURCE MATERIAL:
+The user wrote this letter to their future self:
+{free_write_letter}
 
-TONE:
-- Warm and affirming
-- Psychologically insightful
-- Celebratory but realistic
-- Empowering without being mystical
+Read this letter carefully. This is YOUR MAIN SOURCE for understanding who they are, what they value, and what they dream of. The themes below are extracted from this letter, but always return to the actual letter for authentic language and emotional truth.
 
-USER'S THEMES (use these as your source material):
+EXTRACTED THEMES (supporting material):
 Values: {values}
 Emotional Tone: {emotional_tone}
 Metaphors: {metaphors}
@@ -130,17 +144,52 @@ Aspirations: {aspirations}
 Strengths: {strengths}
 Key Themes: {key_themes}
 
+STRUCTURAL GUIDANCE FOR NARRATIVE FLOW:
+Create a 3-5 line poem with emotional arc and narrative progression:
+
+Line 1: RECOGNITION - Name who they are now, their current reality (use their words)
+Line 2: HONORING STRUGGLE - Acknowledge their journey, challenges, or growth
+Line 3: CELEBRATING STRENGTH - Affirm their resilience or emerging power
+Line 4 (optional): FUTURE VISION - Point toward their aspirations or continuing path
+Line 5 (optional): GROUNDED BLESSING - Seal with realistic, empowering affirmation
+
+VARY YOUR LINE STRUCTURE. Mix openings like:
+- "You are the one who..."
+- "In you lives..."
+- "Through [challenge], you..."
+- "Your [quality] is..."
+- "You carry [metaphor]..."
+
+Avoid formulaic repetition - create rhythm through varied patterns, not identical openings.
+
+WEAVING USER'S WORDS:
+- Quote or paraphrase 1-3 phrases directly from their letter
+- Use their actual language for dreams, fears, hopes, values
+- Mirror their emotional tone while elevating it to celebration
+- Let their authentic voice be the foundation
+
+EXAMPLE STRUCTURE (adapt to user's content):
+You are the architect of small, brave mornings,
+Building trust in yourself one choice at a time.
+In you lives the permission to grow imperfectly—
+Your courage is not in certainty, but in continuing.
+
+STYLE GUIDELINES:
+- Modern, grounded language (no religious or spiritual references)
+- Focus on universal human experiences and emotions
+- Contemporary imagery from everyday life
+- Accessible, clear, psychologically insightful language
+
+TONE:
+- Warm and affirming
+- Psychologically resonant
+- Celebratory but realistic
+- Empowering without being mystical
+
 PRONOUN USAGE:
 Use {pronouns} pronouns consistently throughout the poem.
 
-Create praise poetry that:
-1. Uses modern, accessible language
-2. Celebrates real human qualities and achievements
-3. Grounds metaphors in everyday experience
-4. Affirms without spiritual or religious framing
-5. Feels contemporary and psychologically resonant
-6. Is 4-7 lines long
-7. Uses {pronouns} pronouns consistently
+LENGTH: 3-5 lines (focused and powerful)
 
 {format_instructions}"""
 
@@ -161,19 +210,50 @@ def _create_turkish_prompt() -> ChatPromptTemplate:
 
     template = """You are composing Turkish-style blessing poetry (Alkış).
 
-STYLE GUIDELINES:
-- Alkış (blessing) structure: "May you..." or "Let your..."
-- Folkloric nature metaphors: mountains, rivers, eagles, stars, gardens
-- Themes of protection, prosperity, and good fortune
-- Warm, familial, protective tone
-- Emphasis on blessings for the future
-- Length: 4-7 lines
+YOUR PRIMARY SOURCE MATERIAL:
+The user wrote this letter to their future self:
+{free_write_letter}
 
-TONE:
-- Protective and nurturing
-- Warm and familial
-- Hopeful and prosperous
-- Grounded in nature and community
+Read this letter carefully. This is YOUR MAIN SOURCE for understanding who they are, what they value, and what they dream of. The themes below are extracted from this letter, but always return to the actual letter for authentic language and emotional truth.
+
+EXTRACTED THEMES (supporting material):
+Values: {values}
+Emotional Tone: {emotional_tone}
+Metaphors: {metaphors}
+Identity Markers: {identity_markers}
+Aspirations: {aspirations}
+Strengths: {strengths}
+Key Themes: {key_themes}
+
+STRUCTURAL GUIDANCE FOR NARRATIVE FLOW:
+Create a 3-5 line blessing poem with emotional arc and progression:
+
+Line 1: BLESSING THEIR PRESENT - Acknowledge who they are now (use their words)
+Line 2: BLESSING THEIR JOURNEY - Bless their path, struggle, or growth
+Line 3: BLESSING THEIR FUTURE - Affirm their aspirations with protective hope
+Line 4 (optional): BLESSING THEIR STRENGTH - Seal their resilience with natural metaphor
+Line 5 (optional): BLESSING THEIR BECOMING - Point toward continuing grace
+
+VARY YOUR BLESSING STRUCTURES. Mix patterns like:
+- "May you..."
+- "Let your [quality]..."
+- "May your path be..."
+- "Like the [metaphor], may you..."
+- "Blessed be your [journey/quality]..."
+
+Avoid repetitive openings - create rhythm through varied blessing language.
+
+WEAVING USER'S WORDS:
+- Quote or paraphrase 1-3 phrases directly from their letter
+- Bless their actual stated dreams and aspirations
+- Use their emotional tone as foundation for blessings
+- Let their authentic voice guide the nature of protection offered
+
+EXAMPLE STRUCTURE (adapt to user's content):
+May you find yourself in the morning light you spoke of,
+Your roots deepening like gardens after rain.
+Let courage flow through you, steady as mountain rivers—
+Blessed in the becoming, held in the growing.
 
 COMMON TURKISH FOLK METAPHORS:
 - Mountains (strength, endurance)
@@ -183,26 +263,16 @@ COMMON TURKISH FOLK METAPHORS:
 - Gardens (growth, beauty, cultivation)
 - Light (wisdom, clarity)
 
-USER'S THEMES (use these as your source material):
-Values: {values}
-Emotional Tone: {emotional_tone}
-Metaphors: {metaphors}
-Identity Markers: {identity_markers}
-Aspirations: {aspirations}
-Strengths: {strengths}
-Key Themes: {key_themes}
+TONE:
+- Protective and nurturing
+- Warm and familial
+- Hopeful and prosperous
+- Grounded in nature and community
 
 PRONOUN USAGE:
 Use {pronouns} pronouns consistently throughout the poem.
 
-Create blessing poetry that:
-1. Uses blessing structure: "May you..." or "Let your..."
-2. Incorporates Turkish folk nature metaphors
-3. Emphasizes protection and prosperity
-4. Has a warm, familial, protective tone
-5. Celebrates the user's path forward
-6. Is 4-7 lines long
-7. Uses {pronouns} pronouns consistently
+LENGTH: 3-5 lines (focused and powerful)
 
 {format_instructions}"""
 
@@ -223,25 +293,50 @@ def _create_biblical_prompt() -> ChatPromptTemplate:
 
     template = """You are composing Biblical-style praise poetry.
 
-STYLE GUIDELINES:
-- Scriptural cadence and rhythm (like Psalms or Beatitudes)
-- Blessing language: "Blessed are you who..." or "You are called..."
-- Themes of covenant, purpose, and calling
-- Dignified, reverent tone
-- Affirmation of identity and purpose
-- Length: 4-7 lines
+YOUR PRIMARY SOURCE MATERIAL:
+The user wrote this letter to their future self:
+{free_write_letter}
 
-TONE:
-- Reverent and dignified
-- Affirming and uplifting
-- Prophetic and purposeful
-- Timeless and grounded
+Read this letter carefully. This is YOUR MAIN SOURCE for understanding who they are, what they value, and what they dream of. The themes below are extracted from this letter, but always return to the actual letter for authentic language and emotional truth.
 
-STRUCTURAL PATTERNS:
-- "Blessed are you who..." (Beatitudes style)
-- "You are called to..." (covenant language)
-- "Like [biblical metaphor], you..." (psalm-like comparison)
-- Parallel structure and repetition
+EXTRACTED THEMES (supporting material):
+Values: {values}
+Emotional Tone: {emotional_tone}
+Metaphors: {metaphors}
+Identity Markers: {identity_markers}
+Aspirations: {aspirations}
+Strengths: {strengths}
+Key Themes: {key_themes}
+
+STRUCTURAL GUIDANCE FOR NARRATIVE FLOW:
+Create a 3-5 line biblical poem with emotional arc and covenant progression:
+
+Line 1: NAMING THEIR IDENTITY - Who they are in truth (use their actual words)
+Line 2: HONORING THEIR JOURNEY - Acknowledge their path or trials with dignity
+Line 3: AFFIRMING THEIR CALLING - Speak to their purpose or aspirations
+Line 4 (optional): SEALING THE BLESSING - Affirm their strength with biblical metaphor
+Line 5 (optional): COVENANT PROMISE - Point toward their continuing mission
+
+VARY YOUR STRUCTURAL PATTERNS. Mix openings like:
+- "Blessed are you who..."
+- "You are called to..."
+- "Like the [biblical metaphor], you..."
+- "In you dwells..."
+- "You are as [metaphor]..."
+
+Avoid repetitive formulaic openings - create rhythm through parallel structure, not identical phrases.
+
+WEAVING USER'S WORDS:
+- Quote or paraphrase 1-3 phrases directly from their letter
+- Frame their actual aspirations as divine calling or purpose
+- Use their emotional tone as foundation for blessing language
+- Let their authentic voice be sanctified through the scriptural frame
+
+EXAMPLE STRUCTURE (adapt to user's content):
+Blessed are you who carry questions like lanterns,
+Called to seek truth even when the path turns dark.
+Like a tree planted by living water, your roots deepen—
+In you dwells courage that does not fear the wilderness.
 
 COMMON BIBLICAL METAPHORS:
 - Light (guidance, truth)
@@ -251,26 +346,16 @@ COMMON BIBLICAL METAPHORS:
 - Cornerstone (foundation, strength)
 - Living water (renewal, life)
 
-USER'S THEMES (use these as your source material):
-Values: {values}
-Emotional Tone: {emotional_tone}
-Metaphors: {metaphors}
-Identity Markers: {identity_markers}
-Aspirations: {aspirations}
-Strengths: {strengths}
-Key Themes: {key_themes}
+TONE:
+- Reverent and dignified
+- Affirming and uplifting
+- Prophetic and purposeful
+- Timeless and grounded
 
 PRONOUN USAGE:
 Use {pronouns} pronouns consistently throughout the poem.
 
-Create biblical-style praise poetry that:
-1. Uses scriptural cadence and blessing language
-2. Incorporates biblical metaphors naturally
-3. Emphasizes purpose, calling, and covenant
-4. Has a reverent, dignified tone
-5. Affirms the user's identity and mission
-6. Is 4-7 lines long
-7. Uses {pronouns} pronouns consistently
+LENGTH: 3-5 lines (focused and powerful)
 
 {format_instructions}"""
 
@@ -279,7 +364,7 @@ Create biblical-style praise poetry that:
     ), parser
 
 
-async def compose_poem(themes: ThemeData, cultural_mode: str, pronouns: str = "they_them", display_name: Optional[str] = None) -> PoemOutput:
+async def compose_poem(themes: ThemeData, cultural_mode: str, free_write_letter: str = "", pronouns: str = "they_them", display_name: Optional[str] = None) -> PoemOutput:
     """
     Generates praise poetry in the specified cultural mode.
 
@@ -290,6 +375,7 @@ async def compose_poem(themes: ThemeData, cultural_mode: str, pronouns: str = "t
     Args:
         themes: ThemeData object containing extracted themes from user's quiz
         cultural_mode: One of "yoruba", "secular", "turkish", or "biblical"
+        free_write_letter: The user's original free-write letter for personalization
         pronouns: One of "he_him", "she_her", "they_them", or "name_only"
         display_name: Name to use when pronouns is "name_only" (optional for other modes)
 
@@ -343,7 +429,8 @@ async def compose_poem(themes: ThemeData, cultural_mode: str, pronouns: str = "t
         "aspirations": ", ".join(themes.aspirations),
         "strengths": ", ".join(themes.strengths),
         "key_themes": ", ".join(themes.key_themes),
-        "pronouns": pronoun_instruction
+        "pronouns": pronoun_instruction,
+        "free_write_letter": free_write_letter or "No letter provided."
     }
 
     # Invoke the chain and get the structured PoemOutput
