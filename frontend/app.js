@@ -1780,35 +1780,88 @@ function resetAudioPlayer() {
 }
 
 // ============================================================================
-// SHARE FUNCTIONALITY - Share the Oriki (placeholder)
+// SHARE FUNCTIONALITY - Share the Oriki via social media or Web Share API
 // ============================================================================
+
+/**
+ * Share the Oriki using Web Share API if available
+ * Falls back to showing social share buttons
+ */
 function shareOriki() {
-    // Get the poem lines and first affirmation
+    // Get the first few lines of the poem for preview
     const poemLines = Array.from(elements.poemLines.children)
         .map(el => el.textContent)
+        .slice(0, 3)  // Only first 3 lines for preview
         .join('\n');
 
-    const firstAffirmation = elements.affirmationsList.children[0]?.textContent || '';
+    const appURL = window.location.origin + window.location.pathname;
 
-    // Create share text with poem and a sample affirmation
-    const shareText = `My Oriki (Praise Poetry):\n\n${poemLines}\n\n"${firstAffirmation}"`;
+    // Create a short preview text for sharing
+    const shareText = `I discovered my Oriki - personalized praise poetry that celebrates who I am.\n\nCreate your own: ${appURL}`;
 
-    // Try to use the Web Share API if available (modern browsers)
+    // Try to use the Web Share API if available (modern mobile browsers)
     if (navigator.share) {
         navigator.share({
-            title: 'My Oriki',
+            title: 'My Oriki - Praise Poetry',
             text: shareText,
-            url: window.location.href
+            url: appURL
         }).then(() => {
-            console.log('Shared successfully');
+            console.log('Shared successfully via Web Share API');
         }).catch((error) => {
-            console.log('Error sharing:', error);
-            fallbackShare(shareText);
+            console.log('Web Share API cancelled or failed:', error);
+            // Don't show fallback if user cancelled
         });
     } else {
-        // Fallback: copy to clipboard
-        fallbackShare(shareText);
+        // Show social share options modal for desktop browsers
+        showSocialShareModal(shareText, appURL);
     }
+}
+
+/**
+ * Show a modal with social media share options
+ * @param {string} shareText - The text to share
+ * @param {string} appURL - The app URL
+ */
+function showSocialShareModal(shareText, appURL) {
+    // Create modal overlay
+    const modal = document.createElement('div');
+    modal.className = 'share-modal-overlay';
+    modal.innerHTML = `
+        <div class="share-modal">
+            <h3>Share Your Oriki</h3>
+            <p class="share-modal-text">Share the journey with others:</p>
+            <div class="share-buttons">
+                <a href="https://wa.me/?text=${encodeURIComponent(shareText)}"
+                   target="_blank"
+                   class="share-btn whatsapp-btn">
+                    <span>WhatsApp</span>
+                </a>
+                <a href="https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}"
+                   target="_blank"
+                   class="share-btn twitter-btn">
+                    <span>Twitter/X</span>
+                </a>
+                <a href="https://www.facebook.com/sharer/sharer.php?quote=${encodeURIComponent(shareText)}&u=${encodeURIComponent(appURL)}"
+                   target="_blank"
+                   class="share-btn facebook-btn">
+                    <span>Facebook</span>
+                </a>
+            </div>
+            <button class="btn btn-tertiary close-modal-btn">Close</button>
+        </div>
+    `;
+
+    // Add to page
+    document.body.appendChild(modal);
+
+    // Close modal when clicking overlay or close button
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal || e.target.classList.contains('close-modal-btn')) {
+            modal.remove();
+        }
+    });
+
+    console.log('Social share modal displayed');
 }
 
 // Fallback share function - copy to clipboard
@@ -1833,11 +1886,11 @@ function fallbackShare(text) {
 }
 
 // ============================================================================
-// COPY POEM TO CLIPBOARD - Copy the generated poem text
+// COPY ORIKI TO CLIPBOARD - Copy poem and affirmations together
 // ============================================================================
 
 /**
- * Copy the poem text to the user's clipboard
+ * Copy the complete Oriki (poem + affirmations) to the user's clipboard
  * Shows a temporary "Copied!" feedback message
  */
 async function copyPoemToClipboard() {
@@ -1846,15 +1899,35 @@ async function copyPoemToClipboard() {
         .map(el => el.textContent)
         .join('\n');
 
-    // Check if there's actually poem content to copy
+    // Get all affirmations from the DOM
+    const affirmations = Array.from(elements.affirmationsList.children)
+        .map(el => '• ' + el.textContent)
+        .join('\n');
+
+    // Check if there's actually content to copy
     if (!poemLines || poemLines.trim() === '') {
-        showError('No poem available to copy.');
+        showError('No Oriki available to copy.');
         return;
     }
 
+    // Format the complete text with both poem and affirmations
+    const appURL = window.location.origin + window.location.pathname;
+    const fullText = `✨ My Oriki ✨
+
+${poemLines}
+
+---
+
+Daily Affirmations:
+
+${affirmations}
+
+---
+Created with Oriki: ${appURL}`;
+
     try {
         // Use the modern Clipboard API to copy text
-        await navigator.clipboard.writeText(poemLines);
+        await navigator.clipboard.writeText(fullText);
 
         // Show success feedback by temporarily changing the button text
         const originalText = elements.copyPoemBtn.textContent;
@@ -1867,13 +1940,13 @@ async function copyPoemToClipboard() {
             elements.copyPoemBtn.disabled = false;
         }, 2000);
 
-        console.log('Poem copied to clipboard');
+        console.log('Oriki copied to clipboard');
 
     } catch (error) {
-        console.error('Failed to copy poem:', error);
+        console.error('Failed to copy Oriki:', error);
 
         // Fallback to the older execCommand method if Clipboard API fails
-        fallbackCopyPoem(poemLines);
+        fallbackCopyPoem(fullText);
     }
 }
 
