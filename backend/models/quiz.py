@@ -5,7 +5,7 @@ This module defines validation models for the Oriki quiz submission.
 Uses Pydantic v2 to validate user responses against the quiz configuration.
 """
 
-from typing import List, Literal
+from typing import List, Literal, Optional
 from pydantic import BaseModel, Field, field_validator
 
 # Import the quiz configuration to access valid options
@@ -85,6 +85,13 @@ class QuizSubmission(BaseModel):
     pronouns: Literal["he_him", "she_her", "they_them", "name_only"] = Field(
         ...,
         description="Pronouns to use in the praise poetry"
+    )
+
+    # Optional: Display name (required when pronouns="name_only")
+    display_name: Optional[str] = Field(
+        None,
+        max_length=50,
+        description="Name to use in poetry when name_only pronouns selected"
     )
 
     # Question 9: Free-Write Letter (text input, max 2000 characters)
@@ -170,6 +177,24 @@ class QuizSubmission(BaseModel):
             raise ValueError("Letter cannot be empty")
         return value.strip()
 
+    # Validator for display_name: Required when pronouns is "name_only"
+    @field_validator('display_name')
+    @classmethod
+    def validate_display_name(cls, value: Optional[str], info) -> Optional[str]:
+        """Ensure display_name is provided when pronouns is name_only"""
+        # Get the pronouns value from the validation context
+        pronouns = info.data.get('pronouns')
+
+        # If pronouns is "name_only", display_name must be provided
+        if pronouns == 'name_only':
+            if not value or not value.strip():
+                raise ValueError("Display name is required when using 'name_only' pronouns")
+            # Clean and return the name
+            return value.strip()
+
+        # For other pronoun options, display_name is optional
+        return value.strip() if value else None
+
     # Pydantic v2 configuration
     model_config = {
         "json_schema_extra": {
@@ -182,6 +207,7 @@ class QuizSubmission(BaseModel):
                 "life_focus": "spirituality",
                 "cultural_mode": "yoruba_inspired",
                 "pronouns": "she_her",
+                "display_name": None,
                 "free_write_letter": "Dear future self, remember that you are strong and capable..."
             }
         }

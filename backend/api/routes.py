@@ -106,8 +106,13 @@ async def generate_oriki(submission: QuizSubmission) -> GenerationResponse:
         # Map the cultural mode from quiz format to poetry composer format
         poetry_cultural_mode = map_cultural_mode(submission.cultural_mode)
 
-        # Generate the poem using the extracted themes, cultural mode, and pronouns
-        poem = await compose_poem(themes, poetry_cultural_mode, submission.pronouns)
+        # Generate the poem using the extracted themes, cultural mode, pronouns, and display_name
+        poem = await compose_poem(
+            themes,
+            poetry_cultural_mode,
+            submission.pronouns,
+            submission.display_name
+        )
 
         # Update the poem's cultural_mode to match the quiz format (with _inspired suffix)
         # This ensures consistency across the frontend

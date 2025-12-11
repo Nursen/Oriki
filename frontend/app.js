@@ -78,7 +78,7 @@ const quizQuestions = [
             { value: 'he_him', label: 'He/Him' },
             { value: 'she_her', label: 'She/Her' },
             { value: 'they_them', label: 'They/Them' },
-            { value: 'name_only', label: 'Name Only (no pronouns)' }
+            { value: 'name_only', label: "Name Only (we'll ask for your name next)" }
         ]
     },
     {
@@ -215,6 +215,7 @@ const culturalModeInfo = {
 const quizState = {
     currentQuestionIndex: 0,  // Which question we're on (0-based)
     answers: {},               // Object to store all user answers
+    displayName: null,         // Store display name for name_only pronouns
     totalQuestions: quizQuestions.length
 };
 
@@ -366,6 +367,7 @@ function restartQuiz() {
     // Reset quiz state completely
     quizState.currentQuestionIndex = 0;
     quizState.answers = {};
+    quizState.displayName = null;
     navigationDirection = 'next';
 
     // Reset audio player state
@@ -540,6 +542,11 @@ function renderSingleSelectQuestion(question) {
     });
 
     elements.answerOptions.appendChild(container);
+
+    // If this is the pronouns question and "name_only" is selected, show name input
+    if (question.id === 'pronouns' && selectedValue === 'name_only') {
+        renderNameInput();
+    }
 }
 
 // Render a textarea question (free-form text with character counter)
@@ -626,8 +633,75 @@ function handleSingleSelectChange(questionId, value) {
     // Save the selected value to state
     quizState.answers[questionId] = value;
 
+    // If this is the pronouns question, handle the name input visibility
+    if (questionId === 'pronouns') {
+        // Remove existing name input if it exists
+        const existingNameInput = document.getElementById('name-only-input-container');
+        if (existingNameInput) {
+            existingNameInput.remove();
+        }
+
+        // If user selected "name_only", show the name input
+        if (value === 'name_only') {
+            renderNameInput();
+        } else {
+            // Clear the display name if they changed to a different pronoun option
+            quizState.displayName = null;
+        }
+    }
+
     // Update navigation buttons
     updateNavigationButtons();
+}
+
+// Render the name input field for "name_only" pronoun option
+function renderNameInput() {
+    // Check if name input already exists to avoid duplicates
+    if (document.getElementById('name-only-input-container')) {
+        return;
+    }
+
+    // Create a container for the name input
+    const nameInputContainer = document.createElement('div');
+    nameInputContainer.id = 'name-only-input-container';
+    nameInputContainer.className = 'name-input-container';
+
+    // Add a label
+    const label = document.createElement('label');
+    label.htmlFor = 'display-name-input';
+    label.textContent = 'What name should we use to celebrate you?';
+    label.className = 'name-input-label';
+
+    // Create the text input
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.id = 'display-name-input';
+    input.name = 'display_name';
+    input.placeholder = 'Enter your preferred name';
+    input.maxLength = 50;
+    input.className = 'name-input-field';
+
+    // Set existing value if user is going back
+    if (quizState.displayName) {
+        input.value = quizState.displayName;
+    }
+
+    // Update state as user types
+    input.addEventListener('input', (e) => {
+        quizState.displayName = e.target.value.trim();
+        // Update navigation buttons (enable/disable Next based on input)
+        updateNavigationButtons();
+    });
+
+    // Add label and input to container
+    nameInputContainer.appendChild(label);
+    nameInputContainer.appendChild(input);
+
+    // Add the container to the answer options area
+    elements.answerOptions.appendChild(nameInputContainer);
+
+    // Focus the input for better UX
+    setTimeout(() => input.focus(), 100);
 }
 
 // ============================================================================
@@ -643,7 +717,15 @@ function isCurrentQuestionValid() {
         return answer && answer.length > 0;
     } else if (currentQuestion.type === 'single-select') {
         // Must have a selection
-        return answer !== undefined && answer !== '';
+        const hasSelection = answer !== undefined && answer !== '';
+
+        // If this is the pronouns question and "name_only" is selected,
+        // also check that a name has been provided
+        if (currentQuestion.id === 'pronouns' && answer === 'name_only') {
+            return hasSelection && quizState.displayName && quizState.displayName.length > 0;
+        }
+
+        return hasSelection;
     } else if (currentQuestion.type === 'textarea') {
         // Must have some text (at least 10 characters for meaningful input)
         return answer && answer.trim().length >= 10;
@@ -737,7 +819,12 @@ function showValidationError() {
     if (currentQuestion.type === 'multi-select') {
         errorMessage = 'Please select at least one option.';
     } else if (currentQuestion.type === 'single-select') {
-        errorMessage = 'Please select an option.';
+        // Check if it's the pronoun question with name_only selected
+        if (currentQuestion.id === 'pronouns' && quizState.answers[currentQuestion.id] === 'name_only') {
+            errorMessage = 'Please enter your name.';
+        } else {
+            errorMessage = 'Please select an option.';
+        }
     } else if (currentQuestion.type === 'textarea') {
         errorMessage = 'Please write at least 10 characters.';
     }
@@ -981,6 +1068,7 @@ async function submitQuiz() {
             life_focus: quizState.answers.life_focus || '',
             cultural_mode: quizState.answers.cultural_mode || '',
             pronouns: quizState.answers.pronouns || '',
+            display_name: quizState.displayName || null,
             free_write_letter: quizState.answers.free_write_letter || ''
         };
 

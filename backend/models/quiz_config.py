@@ -156,7 +156,7 @@ PRONOUN_QUESTION = QuizQuestion(
         QuestionOption("he_him", "He/Him"),
         QuestionOption("she_her", "She/Her"),
         QuestionOption("they_them", "They/Them"),
-        QuestionOption("name_only", "Name Only (no pronouns)"),
+        QuestionOption("name_only", "Name Only (we'll ask for your name next)"),
     ]
 )
 

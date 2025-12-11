@@ -9,6 +9,8 @@ CRITICAL: This agent strictly follows CULTURAL_GUIDELINES.md to avoid
 cultural appropriation and respect living traditions.
 """
 
+from typing import Optional
+
 from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
 from langchain.output_parsers import PydanticOutputParser
@@ -277,7 +279,7 @@ Create biblical-style praise poetry that:
     ), parser
 
 
-async def compose_poem(themes: ThemeData, cultural_mode: str, pronouns: str = "they_them") -> PoemOutput:
+async def compose_poem(themes: ThemeData, cultural_mode: str, pronouns: str = "they_them", display_name: Optional[str] = None) -> PoemOutput:
     """
     Generates praise poetry in the specified cultural mode.
 
@@ -289,6 +291,7 @@ async def compose_poem(themes: ThemeData, cultural_mode: str, pronouns: str = "t
         themes: ThemeData object containing extracted themes from user's quiz
         cultural_mode: One of "yoruba", "secular", "turkish", or "biblical"
         pronouns: One of "he_him", "she_her", "they_them", or "name_only"
+        display_name: Name to use when pronouns is "name_only" (optional for other modes)
 
     Returns:
         PoemOutput: Structured poem with lines, mode, and style notes
@@ -318,13 +321,17 @@ async def compose_poem(themes: ThemeData, cultural_mode: str, pronouns: str = "t
     chain = prompt | llm | parser
 
     # Convert pronouns to readable format for the prompt
-    pronoun_map = {
-        "he_him": "he/him",
-        "she_her": "she/her",
-        "they_them": "they/them",
-        "name_only": "no pronouns (use 'The one who...' style instead)"
-    }
-    pronoun_instruction = pronoun_map.get(pronouns, "they/them")
+    # For name_only, use the actual name if provided
+    if pronouns == "name_only" and display_name:
+        pronoun_instruction = f"the name '{display_name}' (no pronouns, just use the name)"
+    else:
+        pronoun_map = {
+            "he_him": "he/him",
+            "she_her": "she/her",
+            "they_them": "they/them",
+            "name_only": "no pronouns (use 'The one who...' style instead)"
+        }
+        pronoun_instruction = pronoun_map.get(pronouns, "they/them")
 
     # Prepare the input variables from the ThemeData object
     # We convert the ThemeData fields into a dictionary for the prompt

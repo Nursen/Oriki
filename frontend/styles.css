@@ -953,6 +953,40 @@ label {
   font-size: 14px;
 }
 
+/* Name input container for "name_only" pronoun option */
+.name-input-container {
+  margin-top: var(--space-lg);
+  padding: var(--space-lg);
+  background-color: var(--color-bg-secondary);
+  border-radius: var(--border-radius-md);
+  border: 2px solid var(--color-gold);
+}
+
+.name-input-label {
+  display: block;
+  font-weight: 600;
+  color: var(--color-brown-deep);
+  margin-bottom: var(--space-sm);
+  font-size: var(--font-size-base);
+}
+
+.name-input-field {
+  width: 100%;
+  padding: var(--space-md);
+  border: 2px solid var(--color-brown-light);
+  border-radius: var(--border-radius-md);
+  font-family: var(--font-sans);
+  font-size: var(--font-size-base);
+  transition: var(--transition-base);
+  background-color: var(--color-bg-card);
+}
+
+.name-input-field:focus {
+  outline: none;
+  border-color: var(--color-terracotta);
+  box-shadow: 0 0 0 3px rgba(200, 98, 64, 0.1);
+}
+
 .quiz-navigation {
   display: flex;
   justify-content: space-between;
