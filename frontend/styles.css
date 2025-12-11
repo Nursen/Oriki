@@ -1225,6 +1225,77 @@ label {
   color: var(--color-brown-deep);
 }
 
+/* ============================================
+   TRADITION SWITCHER STYLES
+   ============================================ */
+
+/* Tradition switcher - allows trying other cultural modes */
+.tradition-switcher {
+  background-color: var(--color-bg-secondary);
+  border-radius: var(--border-radius-lg);
+  padding: var(--space-xl);
+  margin-bottom: var(--space-xl);
+  text-align: center;
+  border: 2px solid var(--color-gold);
+}
+
+.tradition-switcher-label {
+  color: var(--color-brown-medium);
+  font-size: var(--font-size-lg);
+  font-weight: 500;
+  margin-bottom: var(--space-lg);
+}
+
+.tradition-buttons {
+  display: flex;
+  gap: var(--space-md);
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.tradition-btn {
+  min-width: 140px;
+  padding: var(--space-sm) var(--space-lg);
+  font-size: var(--font-size-base);
+  transition: var(--transition-base);
+}
+
+/* Active state for current tradition */
+.tradition-btn.active {
+  background-color: var(--color-terracotta);
+  color: white;
+  border-color: var(--color-terracotta);
+  cursor: default;
+  opacity: 0.7;
+}
+
+.tradition-btn.active:hover {
+  background-color: var(--color-terracotta);
+  transform: none;
+  box-shadow: var(--shadow-sm);
+}
+
+/* Responsive adjustments for tradition switcher */
+@media (max-width: 480px) {
+  .tradition-switcher {
+    padding: var(--space-lg);
+  }
+
+  .tradition-switcher-label {
+    font-size: var(--font-size-base);
+  }
+
+  .tradition-buttons {
+    flex-direction: column;
+    gap: var(--space-sm);
+  }
+
+  .tradition-btn {
+    width: 100%;
+    min-width: auto;
+  }
+}
+
 /* Loading Overlay */
 .loading-overlay {
   position: fixed;

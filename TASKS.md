@@ -84,15 +84,105 @@
 
 ---
 
-## Current Sprint: Sprint 11 - Production Deployment
+## Current Sprint: Sprint 11 - Poetry Quality & UX Improvements
 
-### 6.1 Production Deployment
+**Goal**: Fix disjointed, impersonal poetry by integrating the user's free-write letter, improving prompt narrative flow, and adding quick tradition-switching.
+
+**User Feedback Being Addressed**:
+1. "The Orikis generated still feel so disjointed and impersonal. They don't really flow."
+2. "There are too many affirmations"
+3. "There should be an easy way to try the other traditions when one is generated"
+
+**Root Cause Analysis** (from Yoruba Cultural Consultant):
+- The free_write_letter (most personal input) is NOT being used in poetry prompts
+- Current prompts create disconnected, formulaic lines with no narrative arc
+- Need to weave user's actual words into the poem
+- Line count should be reduced from 4-7 to 3-5 for focus
+
+### Task 11.1: Complete free_write_letter Integration in Prompts
+- [ ] **Add {free_write_letter} to all 4 cultural mode prompts**
+  - File: `backend/agents/poetry_composer.py`
+  - Details: The parameter is already passed to `compose_poem()` and added to `input_vars` (line 348), but none of the 4 prompt templates actually reference `{free_write_letter}`. Add a section to each prompt template that instructs the LLM to draw from the user's letter.
+  - Acceptance: All 4 prompts (Yoruba, Secular, Turkish, Biblical) include `{free_write_letter}` and instruct LLM to weave user's words into the poem.
+
+### Task 11.2: Rewrite Yoruba-Inspired Prompt for Narrative Flow
+- [ ] **Restructure Yoruba prompt for flowing, personal poetry**
+  - File: `backend/agents/poetry_composer.py` (function `_create_yoruba_prompt`)
+  - Details:
+    - Add instruction to create a narrative arc (beginning, middle, end)
+    - Include 1-2 few-shot examples of flowing Yoruba-inspired poetry
+    - Change line count from "4-7 lines" to "3-5 lines"
+    - Add instruction to incorporate user's actual phrases/words from their letter
+    - Emphasize emotional continuity between lines
+  - Acceptance: Generated Yoruba poems feel connected, personal, and flow naturally. Consultant approval required.
+
+### Task 11.3: Rewrite Secular Prompt for Narrative Flow
+- [ ] **Restructure Secular prompt for flowing, personal poetry**
+  - File: `backend/agents/poetry_composer.py` (function `_create_secular_prompt`)
+  - Details:
+    - Add narrative arc instruction
+    - Include 1-2 few-shot examples of flowing secular praise poetry
+    - Change line count from "4-7 lines" to "3-5 lines"
+    - Add instruction to weave user's own words from their letter
+  - Acceptance: Generated secular poems feel cohesive and personally resonant.
+
+### Task 11.4: Rewrite Turkish Prompt for Narrative Flow
+- [ ] **Restructure Turkish prompt for flowing, personal poetry**
+  - File: `backend/agents/poetry_composer.py` (function `_create_turkish_prompt`)
+  - Details:
+    - Add narrative arc instruction for blessing progression
+    - Include 1-2 few-shot examples of flowing Turkish-style blessings
+    - Change line count from "4-7 lines" to "3-5 lines"
+    - Add instruction to incorporate user's words from their letter
+  - Acceptance: Generated Turkish blessings flow naturally with emotional progression.
+
+### Task 11.5: Rewrite Biblical Prompt for Narrative Flow
+- [ ] **Restructure Biblical prompt for flowing, personal poetry**
+  - File: `backend/agents/poetry_composer.py` (function `_create_biblical_prompt`)
+  - Details:
+    - Add narrative arc instruction (covenant-style progression)
+    - Include 1-2 few-shot examples of flowing biblical-style poetry
+    - Change line count from "4-7 lines" to "3-5 lines"
+    - Add instruction to weave user's words from their letter
+  - Acceptance: Generated biblical poetry has scriptural flow and personal resonance.
+
+### Task 11.6: Reduce Affirmation Count
+- [ ] **Change affirmation count from 5-10 to 3-5**
+  - File: `backend/agents/affirmation_generator.py`
+  - Details:
+    - Line ~70: Change "Generate 5-10 affirmations" to "Generate 3-5 affirmations"
+    - Line ~77: Change "identify 3-5 focus areas" to "identify 2-3 focus areas"
+  - Acceptance: Generated affirmations are 3-5 items (not more), with 2-3 focus areas.
+
+### Task 11.7: Add "Try Another Tradition" Buttons to Results
+- [ ] **Add tradition-switching buttons to results page**
+  - File: `frontend/index.html`
+  - Details: Add a new section after the poem container with 4 buttons (one per cultural mode, hiding the current mode). Label: "Try Another Tradition"
+  - Acceptance: 4 tradition buttons visible on results page (current mode hidden or disabled).
+
+- [ ] **Implement tradition-switching logic**
+  - File: `frontend/app.js`
+  - Details:
+    - Store last quiz submission in state (already done for regenerate)
+    - When tradition button clicked: update `cultural_mode` in stored submission, call generate API, display new results
+    - Show loading state during regeneration
+    - Update cultural disclaimer for new mode
+  - Acceptance: Clicking a tradition button regenerates the poem in that tradition without retaking the quiz. Loading state shown. Disclaimer updates.
+
+### Completed Tasks
+(Move tasks here as they're finished)
+
+---
+
+## Deferred: Production Deployment (Sprint 12)
+
+### 12.1 Production Deployment
 - [ ] Deploy backend to Render
 - [ ] Update frontend API_BASE_URL to production
 - [ ] Deploy frontend to GitHub Pages
 - [ ] Verify CORS working in production
 
-### 6.2 Final Checklist
+### 12.2 Final Checklist
 - [ ] All cultural modes generate appropriate poetry
 - [ ] Audio works across browsers (Chrome, Safari, Firefox)
 - [ ] Mobile responsive and accessible

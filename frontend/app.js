@@ -323,6 +323,9 @@ function initializeApp() {
     elements.playPauseBtn.addEventListener('click', togglePlayPause);
     elements.downloadAudioBtn.addEventListener('click', downloadAudio);
 
+    // Attach tradition switcher event listeners
+    attachTraditionSwitcherListeners();
+
     // Set up keyboard navigation for quiz accessibility
     setupKeyboardNavigation();
 
@@ -1552,6 +1555,9 @@ function displayResults(data) {
         // Display cultural disclaimer based on cultural mode
         displayCulturalInfo(culturalMode);
 
+        // Update tradition button states to highlight the current tradition
+        updateTraditionButtonStates(culturalMode);
+
         // Save the Oriki to localStorage for returning users
         saveOrikiToStorage(data);
 
@@ -1950,6 +1956,108 @@ async function regenerateOriki() {
         const errorMessage = error.message || 'Failed to regenerate your Oriki. Please try again.';
         showResultsError(errorMessage);
     }
+}
+
+// ============================================================================
+// TRADITION SWITCHER - Switch between cultural modes
+// ============================================================================
+
+/**
+ * Attach click handlers to all tradition switcher buttons
+ * This is called once during initialization
+ */
+function attachTraditionSwitcherListeners() {
+    // Get all tradition buttons
+    const traditionButtons = document.querySelectorAll('.tradition-btn');
+
+    // Attach click handler to each button
+    traditionButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const newMode = button.getAttribute('data-mode');
+            switchTradition(newMode);
+        });
+    });
+}
+
+/**
+ * Switch to a different cultural tradition without retaking the quiz
+ * @param {string} newMode - The new cultural mode to switch to
+ */
+async function switchTradition(newMode) {
+    console.log('Switching to tradition:', newMode);
+
+    // Check if we have a previous submission stored
+    if (!quizState.lastSubmission) {
+        showError('No quiz data available. Please take the quiz first.');
+        return;
+    }
+
+    // Check if the user is already viewing this tradition
+    if (quizState.lastSubmission.cultural_mode === newMode) {
+        console.log('Already viewing this tradition');
+        return;
+    }
+
+    // Show loading state
+    showLoadingState();
+
+    // Hide any previous errors
+    hideResultsError();
+
+    // Reset audio player before switching traditions
+    resetAudioPlayer();
+
+    try {
+        // Create a new submission with the updated cultural mode
+        const updatedSubmission = {
+            ...quizState.lastSubmission,
+            cultural_mode: newMode
+        };
+
+        // Store the updated submission for future regenerations
+        quizState.lastSubmission = updatedSubmission;
+
+        // Call the API to generate the Oriki in the new tradition
+        const response = await submitQuizToAPI(updatedSubmission);
+
+        console.log('Received response for new tradition:', response);
+
+        // Display the new results
+        displayResults(response);
+
+        // Update the active button state
+        updateTraditionButtonStates(newMode);
+
+    } catch (error) {
+        console.error('Failed to switch tradition:', error);
+
+        // Show user-friendly error message
+        const errorMessage = error.message || 'Failed to switch tradition. Please try again.';
+        showResultsError(errorMessage);
+    }
+}
+
+/**
+ * Update the visual state of tradition buttons
+ * Mark the current tradition as active and disable it
+ * @param {string} currentMode - The currently displayed cultural mode
+ */
+function updateTraditionButtonStates(currentMode) {
+    // Get all tradition buttons
+    const traditionButtons = document.querySelectorAll('.tradition-btn');
+
+    // Update each button
+    traditionButtons.forEach(button => {
+        const buttonMode = button.getAttribute('data-mode');
+
+        if (buttonMode === currentMode) {
+            // Mark this button as active (current tradition)
+            button.classList.add('active');
+        } else {
+            // Remove active state from other buttons
+            button.classList.remove('active');
+        }
+    });
 }
 
 // ============================================================================
