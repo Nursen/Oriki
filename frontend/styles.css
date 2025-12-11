@@ -879,6 +879,15 @@ label {
   outline: none;
 }
 
+/* Keyboard navigation focus indicator - when using number keys */
+.option-card.keyboard-focused {
+  border-color: var(--color-terracotta);
+  background-color: var(--color-terracotta-light);
+  box-shadow: 0 0 0 3px rgba(200, 98, 64, 0.3);
+  -webkit-transform: scale(1.02);
+  transform: scale(1.02);
+}
+
 .option-card input[type="radio"],
 .option-card input[type="checkbox"] {
   margin-top: 4px; /* Align with first line of text */

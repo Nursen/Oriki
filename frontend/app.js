@@ -323,7 +323,138 @@ function initializeApp() {
     elements.playPauseBtn.addEventListener('click', togglePlayPause);
     elements.downloadAudioBtn.addEventListener('click', downloadAudio);
 
+    // Set up keyboard navigation for quiz accessibility
+    setupKeyboardNavigation();
+
     console.log('Oriki Quiz app initialized successfully');
+}
+
+// ============================================================================
+// KEYBOARD NAVIGATION - Full keyboard accessibility for quiz
+// ============================================================================
+
+/**
+ * Set up keyboard navigation for the quiz
+ * Enables number keys (1-9), Enter, and Backspace for better accessibility
+ */
+function setupKeyboardNavigation() {
+    // Listen for keydown events on the document
+    document.addEventListener('keydown', handleKeyboardNavigation);
+}
+
+/**
+ * Handle keyboard navigation for quiz questions
+ * - Number keys (1-9): Select corresponding option
+ * - Enter: Advance to next question or submit
+ * - Backspace: Go back to previous question
+ */
+function handleKeyboardNavigation(event) {
+    // Only activate keyboard navigation when quiz section is active
+    if (!elements.quizSection.classList.contains('active')) {
+        return;
+    }
+
+    // Get the current question to determine its type
+    const currentQuestion = quizQuestions[quizState.currentQuestionIndex];
+
+    // Don't interfere with text input fields (free-write question, name input)
+    const activeElement = document.activeElement;
+    const isTextInput = activeElement.tagName === 'TEXTAREA' ||
+                       (activeElement.tagName === 'INPUT' && activeElement.type === 'text');
+
+    // For textarea questions, only handle Backspace for navigation if not focused on textarea
+    if (currentQuestion.type === 'textarea' && !isTextInput) {
+        // Allow Backspace to go back when not in text input
+        if (event.key === 'Backspace') {
+            event.preventDefault();
+            previousQuestion();
+            return;
+        }
+        // Allow Enter to advance if question is valid
+        if (event.key === 'Enter' && isCurrentQuestionValid()) {
+            event.preventDefault();
+            nextQuestion();
+            return;
+        }
+        return;
+    }
+
+    // If user is in a text input field, don't intercept their typing
+    if (isTextInput) {
+        return;
+    }
+
+    // Handle number keys (1-9) for option selection
+    if (event.key >= '1' && event.key <= '9') {
+        event.preventDefault();
+        const optionIndex = parseInt(event.key) - 1; // Convert to 0-based index
+        selectOptionByIndex(optionIndex);
+        return;
+    }
+
+    // Handle Enter key to advance to next question or submit
+    if (event.key === 'Enter') {
+        event.preventDefault();
+        if (isCurrentQuestionValid()) {
+            nextQuestion();
+        }
+        return;
+    }
+
+    // Handle Backspace key to go back to previous question
+    if (event.key === 'Backspace') {
+        event.preventDefault();
+        previousQuestion();
+        return;
+    }
+}
+
+/**
+ * Select an option by its index using keyboard navigation
+ * Handles both single-select (radio) and multi-select (checkbox) questions
+ */
+function selectOptionByIndex(index) {
+    const currentQuestion = quizQuestions[quizState.currentQuestionIndex];
+
+    // Get all option cards
+    const optionCards = document.querySelectorAll('.option-card');
+
+    // Check if the index is valid
+    if (index >= optionCards.length) {
+        return; // Index out of range, do nothing
+    }
+
+    // Get the corresponding option card and input
+    const optionCard = optionCards[index];
+    const input = optionCard.querySelector('input[type="radio"], input[type="checkbox"]');
+
+    if (!input) {
+        return; // No input found
+    }
+
+    // Add visual keyboard focus indicator
+    // Remove existing keyboard focus from all cards
+    optionCards.forEach(card => card.classList.remove('keyboard-focused'));
+    // Add keyboard focus to selected card
+    optionCard.classList.add('keyboard-focused');
+
+    // Handle based on question type
+    if (currentQuestion.type === 'single-select') {
+        // For radio buttons, select this option
+        input.checked = true;
+        // Trigger the change event to update state
+        handleSingleSelectChange(currentQuestion.id, input.value);
+    } else if (currentQuestion.type === 'multi-select') {
+        // For checkboxes, toggle the selection
+        input.checked = !input.checked;
+        // Trigger the change event to update state
+        handleMultiSelectChange(currentQuestion.id, currentQuestion.maxSelections);
+    }
+
+    // Remove keyboard focus after a brief moment for visual feedback
+    setTimeout(() => {
+        optionCard.classList.remove('keyboard-focused');
+    }, 300);
 }
 
 // ============================================================================
