@@ -136,6 +136,17 @@ const quizQuestions = [
         ]
     },
     {
+        id: 'pronouns',
+        type: 'single-select',
+        question: 'In your praise poetry, you will be celebrated as:',
+        options: [
+            { value: 'he_him', label: 'He/Him' },
+            { value: 'she_her', label: 'She/Her' },
+            { value: 'they_them', label: 'They/Them' },
+            { value: 'name_only', label: 'Name Only (no pronouns)' }
+        ]
+    },
+    {
         id: 'free_write_letter',
         type: 'textarea',
         maxLength: 2000,
@@ -963,6 +974,7 @@ async function submitQuiz() {
             energy_style: quizState.answers.energy_style || '',
             life_focus: quizState.answers.life_focus || '',
             cultural_mode: quizState.answers.cultural_mode || '',
+            pronouns: quizState.answers.pronouns || '',
             free_write_letter: quizState.answers.free_write_letter || ''
         };
 
