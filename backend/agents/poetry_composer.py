@@ -81,11 +81,11 @@ Line 4 (optional): AFFIRMATION - Seal their identity with power and protection
 Line 5 (optional): FUTURE BLESSING - Point toward their continuing path
 
 METAPHOR DISCIPLINE:
-- Select 2-3 core nature metaphors that align with the user's emotional journey
-- Develop each metaphor across multiple lines, showing transformation
-- Avoid listing many metaphors rapidly; deepen fewer for coherent arcs
-- Ensure metaphors connect logically (fire becomes light, river feeds tree)
-- When using metaphors, show specific actions: not "like a mountain" but "standing unshaken as the mountain weathering storms"
+- Select 1-2 core nature metaphors that align with the user's emotional journey
+- Develop your chosen metaphor(s) across multiple lines, showing transformation
+- Do NOT list many metaphors; deepen ONE or TWO for a coherent arc
+- If using two metaphors, show how they work TOGETHER (river carves the path the tree's roots grip)
+- Show specific actions: not "like a mountain" but "standing unshaken as the mountain weathering storms"
 
 VARY YOUR LINE OPENINGS. Mix structures like:
 - "The one who [action]..."
