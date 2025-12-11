@@ -41,7 +41,8 @@ app.add_middleware(
         "http://localhost:8080",        # Alternative local port
         "http://127.0.0.1:3000",        # Local development alternative
         "http://127.0.0.1:8080",        # Alternative local port
-        "https://nursen.github.io"      # Your GitHub Pages domain
+        "https://nursen.github.io",     # Your GitHub Pages domain (lowercase)
+        "https://Nursen.github.io"      # Your GitHub Pages domain (original case)
     ],
     allow_credentials=True,
     allow_methods=["*"],  # Allow all HTTP methods (GET, POST, etc.)
