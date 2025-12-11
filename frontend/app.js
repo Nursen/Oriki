@@ -216,7 +216,8 @@ const quizState = {
     currentQuestionIndex: 0,  // Which question we're on (0-based)
     answers: {},               // Object to store all user answers
     displayName: null,         // Store display name for name_only pronouns
-    totalQuestions: quizQuestions.length
+    totalQuestions: quizQuestions.length,
+    lastSubmission: null       // Store last quiz submission for regeneration
 };
 
 // ============================================================================
@@ -258,6 +259,8 @@ const elements = {
     nextBtn: document.getElementById('next-btn'),
     startOverBtn: document.getElementById('start-over-btn'),
     shareBtn: document.getElementById('share-btn'),
+    copyPoemBtn: document.getElementById('copy-poem-btn'),
+    regenerateBtn: document.getElementById('regenerate-btn'),
 
     // Quiz elements
     questionText: document.getElementById('question-text'),
@@ -306,6 +309,8 @@ function initializeApp() {
     elements.nextBtn.addEventListener('click', nextQuestion);
     elements.startOverBtn.addEventListener('click', restartQuiz);
     elements.shareBtn.addEventListener('click', shareOriki);
+    elements.copyPoemBtn.addEventListener('click', copyPoemToClipboard);
+    elements.regenerateBtn.addEventListener('click', regenerateOriki);
 
     // Attach error handling event listeners
     elements.errorDismissBtn.addEventListener('click', hideError);
@@ -1072,6 +1077,9 @@ async function submitQuiz() {
             free_write_letter: quizState.answers.free_write_letter || ''
         };
 
+        // Store the submission for potential regeneration
+        quizState.lastSubmission = quizSubmission;
+
         console.log('Sending quiz data to API:', quizSubmission);
 
         // Call the API to generate the Oriki
@@ -1480,6 +1488,132 @@ function fallbackShare(text) {
     }
 
     document.body.removeChild(textarea);
+}
+
+// ============================================================================
+// COPY POEM TO CLIPBOARD - Copy the generated poem text
+// ============================================================================
+
+/**
+ * Copy the poem text to the user's clipboard
+ * Shows a temporary "Copied!" feedback message
+ */
+async function copyPoemToClipboard() {
+    // Get all poem lines from the DOM
+    const poemLines = Array.from(elements.poemLines.children)
+        .map(el => el.textContent)
+        .join('\n');
+
+    // Check if there's actually poem content to copy
+    if (!poemLines || poemLines.trim() === '') {
+        showError('No poem available to copy.');
+        return;
+    }
+
+    try {
+        // Use the modern Clipboard API to copy text
+        await navigator.clipboard.writeText(poemLines);
+
+        // Show success feedback by temporarily changing the button text
+        const originalText = elements.copyPoemBtn.textContent;
+        elements.copyPoemBtn.textContent = 'Copied!';
+        elements.copyPoemBtn.disabled = true;
+
+        // Reset the button after 2 seconds
+        setTimeout(() => {
+            elements.copyPoemBtn.textContent = originalText;
+            elements.copyPoemBtn.disabled = false;
+        }, 2000);
+
+        console.log('Poem copied to clipboard');
+
+    } catch (error) {
+        console.error('Failed to copy poem:', error);
+
+        // Fallback to the older execCommand method if Clipboard API fails
+        fallbackCopyPoem(poemLines);
+    }
+}
+
+/**
+ * Fallback method for copying poem text (for older browsers)
+ * Uses the deprecated but widely-supported execCommand
+ */
+function fallbackCopyPoem(text) {
+    // Create a temporary textarea element
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    textarea.style.position = 'fixed';
+    textarea.style.opacity = '0';
+    document.body.appendChild(textarea);
+    textarea.select();
+
+    try {
+        // Execute the copy command
+        document.execCommand('copy');
+
+        // Show success feedback
+        const originalText = elements.copyPoemBtn.textContent;
+        elements.copyPoemBtn.textContent = 'Copied!';
+        elements.copyPoemBtn.disabled = true;
+
+        setTimeout(() => {
+            elements.copyPoemBtn.textContent = originalText;
+            elements.copyPoemBtn.disabled = false;
+        }, 2000);
+
+        console.log('Poem copied using fallback method');
+    } catch (err) {
+        console.error('Fallback copy failed:', err);
+        showError('Unable to copy. Please manually select and copy your poem.');
+    }
+
+    // Remove the temporary textarea
+    document.body.removeChild(textarea);
+}
+
+// ============================================================================
+// REGENERATE ORIKI - Generate a new variation with same quiz answers
+// ============================================================================
+
+/**
+ * Regenerate the Oriki using the same quiz answers
+ * This gives users a fresh variation without retaking the quiz
+ */
+async function regenerateOriki() {
+    console.log('Regenerating Oriki with same answers...');
+
+    // Check if we have a previous submission stored
+    if (!quizState.lastSubmission) {
+        showError('No quiz data available to regenerate. Please take the quiz first.');
+        return;
+    }
+
+    // Show loading state
+    showLoadingState();
+
+    // Hide any previous errors
+    hideResultsError();
+
+    // Reset audio player before regenerating
+    resetAudioPlayer();
+
+    try {
+        // Re-submit the same quiz data to get a new variation
+        const response = await submitQuizToAPI(quizState.lastSubmission);
+
+        console.log('Received regenerated response from API:', response);
+
+        // Display the new results
+        displayResults(response);
+
+    } catch (error) {
+        console.error('Failed to regenerate Oriki:', error);
+
+        // Show user-friendly error message
+        const errorMessage = error.message || 'Failed to regenerate your Oriki. Please try again.';
+        showResultsError(errorMessage);
+    }
 }
 
 // ============================================================================

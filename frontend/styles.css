@@ -1153,6 +1153,15 @@ label {
   gap: var(--space-md);
   margin-top: var(--space-xl);
   flex-wrap: wrap;
+  align-items: center;
+}
+
+/* Button disabled state during "Copied!" feedback */
+.results-actions .btn:disabled {
+  opacity: 0.8;
+  cursor: default;
+  background-color: var(--color-gold);
+  color: var(--color-brown-deep);
 }
 
 /* Loading Overlay */
