@@ -18,6 +18,12 @@ const API_BASE_URL = window.location.hostname === 'localhost' || window.location
 // ============================================================================
 // QUIZ DATA - Hardcoded questions (will fetch from API later)
 // ============================================================================
+// Questions are ordered for optimal user experience:
+// 1. top_values - sets foundation
+// 2. cultural_mode - sets lens for the experience
+// 3. pronouns - foundational identity
+// 4-8. middle questions - explore identity and aspirations
+// 9. free_write_letter - most vulnerable/personal (last)
 const quizQuestions = [
     {
         id: 'top_values',
@@ -35,6 +41,44 @@ const quizQuestions = [
             { value: 'wisdom', label: 'Wisdom' },
             { value: 'connection', label: 'Connection' },
             { value: 'courage', label: 'Courage' }
+        ]
+    },
+    {
+        id: 'cultural_mode',
+        type: 'single-select',
+        question: 'Which cultural/spiritual lens would you like for your praise poetry?',
+        options: [
+            {
+                value: 'yoruba_inspired',
+                label: 'Yoruba-Inspired',
+                description: 'Uses the aesthetic structure of Oríkì (traditional Yoruba praise poetry) with rhythmic repetition and nature metaphors. Inspired by, not claiming to be authentic.'
+            },
+            {
+                value: 'secular',
+                label: 'Secular',
+                description: 'Modern psychological approach grounded in positive psychology and universal human experiences, without religious or spiritual references.'
+            },
+            {
+                value: 'turkish',
+                label: 'Turkish',
+                description: 'Alkış blessing tradition from Turkish folklore, emphasizing protection, prosperity, and warm family blessings with nature imagery.'
+            },
+            {
+                value: 'biblical',
+                label: 'Biblical',
+                description: 'Scriptural cadence inspired by Psalms and Beatitudes, with themes of covenant, purpose, and calling using biblical metaphors.'
+            }
+        ]
+    },
+    {
+        id: 'pronouns',
+        type: 'single-select',
+        question: 'In your praise poetry, you will be celebrated as:',
+        options: [
+            { value: 'he_him', label: 'He/Him' },
+            { value: 'she_her', label: 'She/Her' },
+            { value: 'they_them', label: 'They/Them' },
+            { value: 'name_only', label: 'Name Only (no pronouns)' }
         ]
     },
     {
@@ -109,49 +153,11 @@ const quizQuestions = [
         ]
     },
     {
-        id: 'cultural_mode',
-        type: 'single-select',
-        question: 'Which cultural/spiritual lens would you like for your praise poetry?',
-        options: [
-            {
-                value: 'yoruba_inspired',
-                label: 'Yoruba-Inspired',
-                description: 'Uses the aesthetic structure of Oríkì (traditional Yoruba praise poetry) with rhythmic repetition and nature metaphors. Inspired by, not claiming to be authentic.'
-            },
-            {
-                value: 'secular',
-                label: 'Secular',
-                description: 'Modern psychological approach grounded in positive psychology and universal human experiences, without religious or spiritual references.'
-            },
-            {
-                value: 'turkish',
-                label: 'Turkish',
-                description: 'Alkış blessing tradition from Turkish folklore, emphasizing protection, prosperity, and warm family blessings with nature imagery.'
-            },
-            {
-                value: 'biblical',
-                label: 'Biblical',
-                description: 'Scriptural cadence inspired by Psalms and Beatitudes, with themes of covenant, purpose, and calling using biblical metaphors.'
-            }
-        ]
-    },
-    {
-        id: 'pronouns',
-        type: 'single-select',
-        question: 'In your praise poetry, you will be celebrated as:',
-        options: [
-            { value: 'he_him', label: 'He/Him' },
-            { value: 'she_her', label: 'She/Her' },
-            { value: 'they_them', label: 'They/Them' },
-            { value: 'name_only', label: 'Name Only (no pronouns)' }
-        ]
-    },
-    {
         id: 'free_write_letter',
         type: 'textarea',
         maxLength: 2000,
-        question: 'In your own words, what do you hope your legacy will be? What do you want to be remembered for?',
-        placeholder: 'Share your thoughts about how you want to impact the world and be remembered...'
+        question: 'What words do you need spoken over your life right now?',
+        placeholder: 'Share what you need to hear, what truths you need affirmed, or what encouragement speaks to your current season...'
     }
 ];
 

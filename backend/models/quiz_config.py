@@ -164,23 +164,29 @@ PRONOUN_QUESTION = QuizQuestion(
 # Question 9: Free-Write Letter (text input, not multiple choice)
 LETTER_QUESTION = QuizQuestion(
     id="letter",
-    text="Write a brief letter to your future self. What do you want to remember about who you are?",
+    text="What words do you need spoken over your life right now?",
     is_multi_select=False,
     options=[]  # No options - this is a free-text field
 )
 
 
 # Master list of all quiz questions in order
+# Ordered for optimal user experience:
+# 1. top_values - sets foundation
+# 2. cultural_mode - sets lens for the experience
+# 3. pronouns - foundational identity
+# 4-7. middle questions - explore identity and aspirations
+# 8. free_write_letter - most vulnerable/personal (last)
 ALL_QUESTIONS = [
-    VALUES_QUESTION,
-    STRENGTH_QUESTION,
-    ASPIRATION_QUESTION,
-    METAPHOR_QUESTION,
-    ENERGY_QUESTION,
-    LIFE_FOCUS_QUESTION,
-    CULTURAL_MODE_QUESTION,
-    PRONOUN_QUESTION,
-    LETTER_QUESTION,
+    VALUES_QUESTION,           # 1. Top values (foundation)
+    CULTURAL_MODE_QUESTION,    # 2. Cultural lens (sets tone)
+    PRONOUN_QUESTION,          # 3. Pronouns (identity)
+    STRENGTH_QUESTION,         # 4. Greatest strength
+    ASPIRATION_QUESTION,       # 5. Aspirational trait
+    METAPHOR_QUESTION,         # 6. Metaphor/archetype
+    ENERGY_QUESTION,           # 7. Energy style
+    LIFE_FOCUS_QUESTION,       # 8. Life focus
+    LETTER_QUESTION,           # 9. Free-write (most personal)
 ]
 
 
