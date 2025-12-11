@@ -67,14 +67,14 @@ PRINCIPLES FOR AFFIRMATION CREATION:
 
 STRUCTURE YOUR OUTPUT:
 
-Generate 5-10 affirmations that:
+Generate 3-5 affirmations that:
 - Are specific to this user's themes and values
 - Acknowledge the real challenges of growth
 - Promote self-compassion and realistic optimism
 - Support their aspirations in an achievable way
 - Use varied sentence structures (I am, I choose, I embrace, I honor, etc.)
 
-Also identify 3-5 focus areas that these affirmations address (e.g., "self-compassion",
+Also identify 2-3 focus areas that these affirmations address (e.g., "self-compassion",
 "resilience", "authentic expression", "personal growth").
 
 Remember: These affirmations should feel authentic and achievable, not like empty platitudes.
