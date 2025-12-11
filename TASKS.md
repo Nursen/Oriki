@@ -63,19 +63,48 @@
 
 ---
 
+## Next Sprint: Sprint 5 - Pronoun Support & Quiz UX
+
+### 5.1 Backend: Pronoun Support
+- [ ] Add pronoun question to `quiz_config.py` (options: he/him, she/her, they/them, name only)
+- [ ] Add `pronouns` field to `QuizSubmission` model in `quiz.py`
+- [ ] Update `poetry_composer.py` prompts to use pronouns in all 4 cultural modes
+
+### 5.2 Frontend: Pronoun Question
+- [ ] Add pronoun question to `app.js` quiz questions array
+- [ ] Ensure pronoun is included in quiz submission payload
+
+### 5.3 Quiz Flow Improvements
+- [ ] Reorder quiz: move cultural mode to position 2 (sets context early)
+- [ ] Reframe free-write question: "What words do you need spoken over your life right now?"
+- [ ] Update question order in both frontend and backend
+
+### 5.4 Testing
+- [ ] Test pronoun integration end-to-end (all pronoun options)
+- [ ] Verify poetry uses correct pronouns consistently
+- [ ] Test quiz flow feels natural with new order
+
+---
+
 ## Future Features (Post-MVP)
 
 ### Tier 1: Quick Wins
 - [ ] Regenerate variations button
 - [ ] Voice selection for TTS
 - [ ] Copy poem to clipboard
+- [ ] Ceremonial welcome screen with warm framing
+- [ ] Micro-introductions before key questions
 
 ### Tier 2: Enhanced Experience
+- [ ] "Who Sees You?" question (relational/communal)
+- [ ] "Legacy" question (aspirational identity)
+- [ ] Affirmative micro-responses after certain answers
 - [ ] Ambient audio mixing
 - [ ] Shareable links
 - [ ] Animated visual background
 
 ### Tier 3: Growth Features
 - [ ] User accounts
+- [ ] Mode-specific quiz variations
 - [ ] Additional cultural modes
 - [ ] Multi-language support
