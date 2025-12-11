@@ -115,12 +115,6 @@ python3.11 -m http.server 3000
 ### Commit Guidelines
 - Commit after each completed task (not batched)
 - Use descriptive commit messages
-- Include emoji footer and co-author line:
-  ```
-  🤖 Generated with [Claude Code](https://claude.com/claude-code)
-
-  Co-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>
-  ```
 - Check with @agent-git-hygiene-advisor before committing
 
 ### Quick Sprint Iteration

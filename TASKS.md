@@ -38,51 +38,40 @@
 - [x] Mobile responsiveness and accessibility
 - [x] Focus/hover states, touch targets
 
+### Sprint 4: Final Testing & Launch (COMPLETE)
+- [x] Test all 4 cultural modes (Yoruba, Secular, Turkish, Biblical)
+- [x] Fixed LangChain import issues (PydanticOutputParser)
+- [x] Fixed CORS configuration with explicit origins
+- [x] Fixed frontend/backend quiz option mismatches
+- [x] End-to-end generation working locally
+
+### Sprint 5: Pronoun Support & Quiz UX (COMPLETE)
+- [x] Add pronoun question to `quiz_config.py` (he/him, she/her, they/them, name only)
+- [x] Add `pronouns` field to `QuizSubmission` model in `quiz.py`
+- [x] Update `poetry_composer.py` prompts to use pronouns in all 4 cultural modes
+- [x] Add pronoun question to `app.js` quiz questions array
+- [x] Ensure pronoun is included in quiz submission payload
+- [x] Reorder quiz: cultural mode to position 2, pronouns to position 3
+- [x] Reframe free-write question: "What words do you need spoken over your life right now?"
+- [x] Center quiz on screen (CSS fix)
+- [x] Cultural consultant approved pronoun implementation
+
 ---
 
-## Current Sprint: Sprint 4 - Final Testing & Launch
+## Current Sprint: Sprint 6 - Production Deployment
 
-### 4.1 End-to-End Testing
-- [ ] Test all 4 cultural modes (Yoruba, Secular, Turkish, Biblical)
-- [ ] Verify audio generation and playback
-- [ ] Test error handling (disconnect backend, timeout)
-- [ ] Test mobile experience on real device
-
-### 4.2 Production Deployment
+### 6.1 Production Deployment
 - [ ] Deploy backend to Render
 - [ ] Update frontend API_BASE_URL to production
 - [ ] Deploy frontend to GitHub Pages
 - [ ] Verify CORS working in production
 
-### 4.3 Final Checklist
+### 6.2 Final Checklist
 - [ ] All cultural modes generate appropriate poetry
 - [ ] Audio works across browsers (Chrome, Safari, Firefox)
 - [ ] Mobile responsive and accessible
 - [ ] Error states handled gracefully
 - [ ] Start Over resets completely
-
----
-
-## Next Sprint: Sprint 5 - Pronoun Support & Quiz UX
-
-### 5.1 Backend: Pronoun Support
-- [ ] Add pronoun question to `quiz_config.py` (options: he/him, she/her, they/them, name only)
-- [ ] Add `pronouns` field to `QuizSubmission` model in `quiz.py`
-- [ ] Update `poetry_composer.py` prompts to use pronouns in all 4 cultural modes
-
-### 5.2 Frontend: Pronoun Question
-- [ ] Add pronoun question to `app.js` quiz questions array
-- [ ] Ensure pronoun is included in quiz submission payload
-
-### 5.3 Quiz Flow Improvements
-- [ ] Reorder quiz: move cultural mode to position 2 (sets context early)
-- [ ] Reframe free-write question: "What words do you need spoken over your life right now?"
-- [ ] Update question order in both frontend and backend
-
-### 5.4 Testing
-- [ ] Test pronoun integration end-to-end (all pronoun options)
-- [ ] Verify poetry uses correct pronouns consistently
-- [ ] Test quiz flow feels natural with new order
 
 ---
 

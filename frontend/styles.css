@@ -757,10 +757,22 @@ label {
 }
 
 /* Welcome Section */
+#welcome-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
 .welcome-content {
   max-width: 700px;
+  width: 100%;
+  margin: 0 auto;
   text-align: center;
   padding: var(--space-2xl);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .welcome-content h2 {
@@ -781,11 +793,19 @@ label {
 }
 
 /* Quiz Section */
+#quiz-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
 .quiz-content {
   max-width: 800px;
   width: 100%;
   margin: 0 auto;
   padding: var(--space-xl);
+  text-align: center;
 }
 
 .quiz-progress {
@@ -950,9 +970,17 @@ label {
 }
 
 /* Results Section */
+#results-section {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  width: 100%;
+}
+
 .results-content {
   max-width: 800px;
   width: 100%;
+  margin: 0 auto;
   padding: var(--space-xl);
 }
 
