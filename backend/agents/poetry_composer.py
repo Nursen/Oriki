@@ -11,7 +11,7 @@ cultural appropriation and respect living traditions.
 
 from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
-from langchain_core.output_parsers import PydanticOutputParser
+from langchain.output_parsers import PydanticOutputParser
 
 from backend.models.theme import ThemeData
 from backend.models.poem import PoemOutput

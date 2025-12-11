@@ -23,16 +23,18 @@ const quizQuestions = [
         id: 'top_values',
         type: 'multi-select',
         maxSelections: 3,
-        question: 'What values matter most to you? (Select up to 3)',
+        question: 'Select your top 3 core values:',
         options: [
-            { value: 'wisdom', label: 'Wisdom' },
-            { value: 'courage', label: 'Courage' },
-            { value: 'compassion', label: 'Compassion' },
             { value: 'integrity', label: 'Integrity' },
             { value: 'creativity', label: 'Creativity' },
-            { value: 'community', label: 'Community' },
-            { value: 'leadership', label: 'Leadership' },
-            { value: 'spirituality', label: 'Spirituality' }
+            { value: 'family', label: 'Family' },
+            { value: 'growth', label: 'Growth' },
+            { value: 'freedom', label: 'Freedom' },
+            { value: 'compassion', label: 'Compassion' },
+            { value: 'achievement', label: 'Achievement' },
+            { value: 'wisdom', label: 'Wisdom' },
+            { value: 'connection', label: 'Connection' },
+            { value: 'courage', label: 'Courage' }
         ]
     },
     {
@@ -40,58 +42,70 @@ const quizQuestions = [
         type: 'single-select',
         question: 'What is your greatest strength?',
         options: [
-            { value: 'resilience', label: 'Resilience - I bounce back from challenges' },
-            { value: 'insight', label: 'Insight - I see what others miss' },
-            { value: 'empathy', label: 'Empathy - I understand and feel with others' },
-            { value: 'determination', label: 'Determination - I never give up' },
-            { value: 'vision', label: 'Vision - I see possibilities and future paths' }
+            { value: 'leadership', label: 'Leadership' },
+            { value: 'empathy', label: 'Empathy' },
+            { value: 'resilience', label: 'Resilience' },
+            { value: 'creativity', label: 'Creativity' },
+            { value: 'analytical_thinking', label: 'Analytical Thinking' },
+            { value: 'communication', label: 'Communication' },
+            { value: 'patience', label: 'Patience' },
+            { value: 'adaptability', label: 'Adaptability' }
         ]
     },
     {
         id: 'aspirational_trait',
         type: 'single-select',
-        question: 'What quality do you most aspire to develop?',
+        question: 'What quality do you aspire to embody more?',
         options: [
-            { value: 'patience', label: 'Patience' },
+            { value: 'confidence', label: 'Confidence' },
+            { value: 'peace', label: 'Peace' },
             { value: 'boldness', label: 'Boldness' },
             { value: 'wisdom', label: 'Wisdom' },
-            { value: 'grace', label: 'Grace' },
-            { value: 'strength', label: 'Strength' }
+            { value: 'joy', label: 'Joy' },
+            { value: 'influence', label: 'Influence' },
+            { value: 'authenticity', label: 'Authenticity' },
+            { value: 'discipline', label: 'Discipline' }
         ]
     },
     {
         id: 'metaphor_archetype',
         type: 'single-select',
-        question: 'Which natural element resonates with you most?',
+        question: 'Which metaphor resonates most with you?',
         options: [
-            { value: 'mountain', label: 'Mountain - Steadfast and enduring' },
-            { value: 'river', label: 'River - Flowing and adaptive' },
-            { value: 'fire', label: 'Fire - Passionate and transformative' },
-            { value: 'tree', label: 'Tree - Rooted and growing' },
-            { value: 'wind', label: 'Wind - Free and influential' }
+            { value: 'mountain', label: 'The Mountain' },
+            { value: 'river', label: 'The River' },
+            { value: 'flame', label: 'The Flame' },
+            { value: 'tree', label: 'The Tree' },
+            { value: 'storm', label: 'The Storm' },
+            { value: 'sun', label: 'The Sun' },
+            { value: 'bridge', label: 'The Bridge' },
+            { value: 'garden', label: 'The Garden' }
         ]
     },
     {
         id: 'energy_style',
         type: 'single-select',
-        question: 'How do you approach challenges?',
+        question: 'How would you describe your energy?',
         options: [
-            { value: 'contemplative', label: 'I reflect deeply before acting' },
-            { value: 'assertive', label: 'I take direct, decisive action' },
-            { value: 'collaborative', label: 'I gather others and work together' },
-            { value: 'innovative', label: 'I find creative, new solutions' }
+            { value: 'charismatic', label: 'Charismatic' },
+            { value: 'grounded', label: 'Grounded/Natural' },
+            { value: 'visionary', label: 'Visionary' },
+            { value: 'healer', label: 'Healer' },
+            { value: 'warrior', label: 'Warrior' },
+            { value: 'sage', label: 'Sage' }
         ]
     },
     {
         id: 'life_focus',
         type: 'single-select',
-        question: 'What brings you the most fulfillment?',
+        question: 'What is your primary life focus right now?',
         options: [
-            { value: 'learning', label: 'Learning and growing in knowledge' },
-            { value: 'creating', label: 'Creating and building things' },
-            { value: 'serving', label: 'Serving and helping others' },
-            { value: 'exploring', label: 'Exploring and experiencing life' },
-            { value: 'connecting', label: 'Connecting deeply with others' }
+            { value: 'career', label: 'Career' },
+            { value: 'parenting', label: 'Parenting' },
+            { value: 'relationships', label: 'Love/Relationships' },
+            { value: 'health', label: 'Health' },
+            { value: 'spirituality', label: 'Spirituality' },
+            { value: 'creative_expression', label: 'Creative Expression' }
         ]
     },
     {

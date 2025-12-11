@@ -9,7 +9,8 @@ avoiding toxic positivity while promoting realistic growth and self-compassion.
 """
 
 from langchain_openai import ChatOpenAI
-from langchain.prompts import ChatPromptTemplate
+from langchain_core.prompts import ChatPromptTemplate
+from langchain.output_parsers import PydanticOutputParser
 
 # Import our models
 from backend.models.affirmations import AffirmationsOutput
@@ -17,6 +18,10 @@ from backend.models.theme import ThemeData
 
 # Import settings for API key configuration
 from backend.config import settings
+
+
+# Initialize the parser with our AffirmationsOutput model
+parser = PydanticOutputParser(pydantic_object=AffirmationsOutput)
 
 
 # ============================================================================
@@ -74,14 +79,16 @@ Also identify 3-5 focus areas that these affirmations address (e.g., "self-compa
 
 Remember: These affirmations should feel authentic and achievable, not like empty platitudes.
 They should support the user's psychological wellbeing through realistic self-talk.
-""")
+
+{format_instructions}
+""").partial(format_instructions=parser.get_format_instructions())
 
 
 # ============================================================================
 # AGENT CREATION FUNCTION
 # ============================================================================
 
-def create_affirmation_generator() -> ChatOpenAI:
+def create_affirmation_generator():
     """
     Creates an Affirmation Generator agent with structured output.
 
@@ -90,21 +97,20 @@ def create_affirmation_generator() -> ChatOpenAI:
 
     The chain uses:
     - ChatOpenAI with gpt-4o-mini for cost-effective generation
-    - Structured output to ensure data matches our AffirmationsOutput model
+    - PydanticOutputParser to ensure data matches our AffirmationsOutput model
     - Temperature of 0.6 for consistent, grounded output with some variation
     """
 
-    # Initialize the LLM with structured output enabled
-    # The with_structured_output() method automatically validates against AffirmationsOutput
+    # Initialize the LLM
     llm = ChatOpenAI(
         model="gpt-4o-mini",  # Cost-effective model suitable for affirmation generation
         temperature=0.6,  # Lower temp for consistency while allowing some creative variation
         api_key=settings.OPENAI_API_KEY  # Load API key from settings
     )
 
-    # Create the chain: prompt -> LLM with structured output
-    # The pipe operator (|) chains the prompt template to the LLM
-    chain = AFFIRMATION_PROMPT | llm.with_structured_output(AffirmationsOutput)
+    # Create the chain: prompt -> LLM -> parser
+    # The pipe operator (|) chains the components together
+    chain = AFFIRMATION_PROMPT | llm | parser
 
     return chain
 

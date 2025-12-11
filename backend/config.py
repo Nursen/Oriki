@@ -49,7 +49,7 @@ class Settings(BaseSettings):
     # Pydantic settings configuration
     # This tells pydantic-settings where to find the .env file
     model_config = SettingsConfigDict(
-        env_file=".env",  # Look for .env in the same directory
+        env_file="backend/.env",  # Look for .env in the backend directory
         env_file_encoding="utf-8",
         case_sensitive=True,  # Environment variables are case-sensitive
         extra="ignore"  # Ignore extra fields in .env that aren't defined here

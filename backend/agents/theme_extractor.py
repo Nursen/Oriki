@@ -4,12 +4,13 @@ Theme Extractor Agent - LangChain Implementation
 This agent analyzes quiz responses and free-write letters to extract
 meaningful themes, values, and insights for poetry generation.
 
-Uses LangChain with OpenAI's structured output feature to ensure
+Uses LangChain with PydanticOutputParser to ensure
 reliable, validated data extraction.
 """
 
 from langchain_openai import ChatOpenAI
-from langchain.prompts import ChatPromptTemplate
+from langchain_core.prompts import ChatPromptTemplate
+from langchain.output_parsers import PydanticOutputParser
 
 # Import our models
 from backend.models.theme import ThemeData
@@ -17,6 +18,10 @@ from backend.models.quiz import QuizSubmission
 
 # Import settings for API key configuration
 from backend.config import settings
+
+
+# Initialize the parser with our ThemeData model
+parser = PydanticOutputParser(pydantic_object=ThemeData)
 
 
 # ============================================================================
@@ -58,14 +63,16 @@ Your task is to deeply analyze these responses and extract:
 7. KEY_THEMES: Synthesize 3-5 overarching themes that tie together their values, strengths, and story. These should be brief phrases that capture the essence of their journey.
 
 Be authentic and specific to this individual. Extract themes from both explicit statements and implicit patterns.
-""")
+
+{format_instructions}
+""").partial(format_instructions=parser.get_format_instructions())
 
 
 # ============================================================================
 # AGENT CREATION FUNCTION
 # ============================================================================
 
-def create_theme_extractor() -> ChatOpenAI:
+def create_theme_extractor():
     """
     Creates a Theme Extractor agent with structured output.
 
@@ -74,21 +81,20 @@ def create_theme_extractor() -> ChatOpenAI:
 
     The chain uses:
     - ChatOpenAI with gpt-4o-mini for cost-effective analysis
-    - Structured output to ensure data matches our ThemeData model
+    - PydanticOutputParser to ensure data matches our ThemeData model
     - Temperature of 0.7 for balanced creativity and consistency
     """
 
-    # Initialize the LLM with structured output enabled
-    # The with_structured_output() method automatically validates against ThemeData
+    # Initialize the LLM
     llm = ChatOpenAI(
         model="gpt-4o-mini",  # Cost-effective model suitable for extraction tasks
         temperature=0.7,  # Balanced: creative insights but consistent structure
         api_key=settings.OPENAI_API_KEY  # Load API key from settings
     )
 
-    # Create the chain: prompt -> LLM with structured output
-    # The pipe operator (|) chains the prompt template to the LLM
-    chain = THEME_EXTRACTION_PROMPT | llm.with_structured_output(ThemeData)
+    # Create the chain: prompt -> LLM -> parser
+    # The pipe operator (|) chains the components together
+    chain = THEME_EXTRACTION_PROMPT | llm | parser
 
     return chain
 

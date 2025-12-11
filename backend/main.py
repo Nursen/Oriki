@@ -37,9 +37,10 @@ app = FastAPI(
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "http://localhost:*",           # Local development
-        "http://127.0.0.1:*",           # Local development alternative
-        "https://*.github.io",          # GitHub Pages (wildcard)
+        "http://localhost:3000",        # Local frontend development
+        "http://localhost:8080",        # Alternative local port
+        "http://127.0.0.1:3000",        # Local development alternative
+        "http://127.0.0.1:8080",        # Alternative local port
         "https://nursen.github.io"      # Your GitHub Pages domain
     ],
     allow_credentials=True,
