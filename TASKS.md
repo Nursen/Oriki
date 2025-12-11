@@ -56,9 +56,35 @@
 - [x] Center quiz on screen (CSS fix)
 - [x] Cultural consultant approved pronoun implementation
 
+### Sprint 7: Name Input for Name Only (COMPLETE)
+- [x] Add `display_name` field to backend quiz model
+- [x] Update poetry composer to use display name in prompts
+- [x] Add conditional name input field in frontend when "name_only" selected
+- [x] Validation requires name when name_only is chosen
+
+### Sprint 8: Copy & Regenerate (COMPLETE)
+- [x] Add "Copy Poem" button with clipboard API and fallback
+- [x] Add "Generate New Variation" button to regenerate with same inputs
+- [x] Store last submission in state for regeneration
+- [x] Visual feedback for copy success
+
+### Sprint 9: Keyboard Navigation (COMPLETE)
+- [x] Number keys (1-9) select quiz options
+- [x] Enter advances to next question / submits
+- [x] Backspace goes back to previous question
+- [x] Visual focus indicators for keyboard selection
+- [x] Skip keyboard nav when in text inputs
+
+### Sprint 10: LocalStorage Persistence (COMPLETE)
+- [x] Save oriki results to localStorage after generation
+- [x] Check for saved oriki on app load
+- [x] Show "Welcome back" prompt for returning users
+- [x] "View Last Oriki" and "Start Fresh" options
+- [x] Clear saved data on "Start Over"
+
 ---
 
-## Current Sprint: Sprint 6 - Production Deployment
+## Current Sprint: Sprint 11 - Production Deployment
 
 ### 6.1 Production Deployment
 - [ ] Deploy backend to Render
@@ -89,16 +115,16 @@ Items to implement after MVP is live and stable.
 ### Tier 1: Quick Wins (High Impact, Low Effort)
 Each item completable in 2-4 hours.
 
-- [ ] **Name Input for "Name Only" Pronouns** - Show name input field when user selects "name_only" option. Use name in poetry generation.
+- [x] **Name Input for "Name Only" Pronouns** - Show name input field when user selects "name_only" option. Use name in poetry generation. *(Sprint 7)*
+- [x] **Regenerate Variations Button** - Button on results page to generate a new variation with same inputs. *(Sprint 8)*
+- [x] **Copy Poem to Clipboard** - Copy button with "Copied!" feedback. *(Sprint 8)*
+- [x] **Keyboard Navigation for Quiz** - Full keyboard accessibility: number keys (1-9) select options, Enter advances, Backspace goes back. *(Sprint 9)*
+- [x] **Offline Save via LocalStorage** - Save generated oriki to localStorage. On return, prompt to revisit or start fresh. *(Sprint 10)*
 - [ ] **Pre-Generation Reflection Pause** - 15-second breathing moment with ambient sound before results appear. "Take a breath. Your oriki is being composed..."
 - [ ] **Ritual Framing for Audio Playback** - "Create Sacred Space" button that dims UI, centers audio player, creates focused listening experience
 - [ ] **Few-Shot Examples in Prompts** - Add 2-3 exemplar poems per cultural mode to `poetry_composer.py` for consistent quality
-- [ ] **Regenerate Variations Button** - Button on results page to generate a new variation with same inputs
 - [ ] **Voice Selection for TTS** - Dropdown to choose OpenAI voice (alloy, echo, fable, onyx, nova, shimmer)
-- [ ] **Copy Poem to Clipboard** - Copy button with "Copied!" feedback
 - [ ] **Ceremonial Welcome Screen** - Warm framing on landing page explaining the sacred nature of praise poetry
-- [ ] **Offline Save via LocalStorage** - Save generated oriki (poem, affirmations, mode) to localStorage. On return, prompt: "Welcome back. Would you like to revisit your last Oriki?" Zero backend cost, improves retention.
-- [ ] **Keyboard Navigation for Quiz** - Full keyboard accessibility: number keys (1-9) select options, Enter advances, Backspace goes back. Add visual focus indicators. Accessibility win + power-user experience.
 
 ### Tier 2: Enhanced Experience (Medium Effort)
 Features that deepen the experience. 4-8 hours each.
